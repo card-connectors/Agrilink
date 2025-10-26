@@ -1,9 +1,7 @@
+// components/AddLandModal.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-const AddLand = () => {
-  const navigate = useNavigate();
-
+const AddLand = ({ onClose, onAdd }) => {
   const [land, setLand] = useState({
     title: "",
     location: "",
@@ -12,6 +10,7 @@ const AddLand = () => {
     waterResources: [],
     suitableFor: "",
     description: "",
+    photos: [],
   });
 
   const handleChange = (e) => {
@@ -31,39 +30,32 @@ const AddLand = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await fetch("http://127.0.0.1:8000/api/auth/land/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(land),
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      alert("Error: " + JSON.stringify(err));
-    } else {
-      alert("Land details added successfully!");
-      navigate("/dashboard");
-    }
-  } catch (err) {
-    alert("Error submitting land details!");
-  }
-};
-
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onAdd(land); // send data to parent
+    onClose(); // close modal
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-      <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-2xl">
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black bg-opacity-50"
+        onClick={onClose}
+      ></div>
+
+      {/* Modal Card */}
+      <div className="relative bg-white shadow-xl rounded-xl p-6 w-full max-w-2xl z-10 overflow-y-auto max-h-[90vh]">
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-          🏞️ Add Land Details
+          Add Land Details
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+
           {/* Land Title */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Land Title
+              Land Name
             </label>
             <input
               type="text"
@@ -183,16 +175,81 @@ const AddLand = () => {
               onChange={handleChange}
               placeholder="Add any additional details about your land..."
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 h-24"
+              required
             />
           </div>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-lg transition-colors duration-200"
-          >
-            Submit Land Details
-          </button>
+          {/* Photo Upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Upload Photos (Max 4)
+            </label>
+
+            <div className="grid grid-cols-2 gap-2 border rounded-lg p-4">
+              {[0, 1, 2, 3].map((idx) => (
+                <div
+                  key={idx}
+                  className="w-full h-32 bg-gray-100 flex items-center justify-center cursor-pointer relative rounded"
+                  onClick={() => document.getElementById(`photoInput-${idx}`).click()}
+                >
+                  {land.photos[idx] ? (
+                    <>
+                      <img
+                        src={land.photos[idx]}
+                        alt={`land-${idx}`}
+                        className="w-full h-full object-cover rounded"
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const newPhotos = land.photos.filter((_, i) => i !== idx);
+                          setLand({ ...land, photos: newPhotos });
+                        }}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                      >
+                        &times;
+                      </button>
+                    </>
+                  ) : (
+                    <p className="text-gray-400 text-sm text-center">
+                      {land.photos.length < 4 ? "Click to upload" : "Maximum photos uploaded"}
+                    </p>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    id={`photoInput-${idx}`}
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (!file) return;
+                      const newPhotos = [...land.photos];
+                      newPhotos[idx] = URL.createObjectURL(file);
+                      setLand({ ...land, photos: newPhotos });
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-end gap-2 mt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
+            >
+              Add Land
+            </button>
+          </div>
         </form>
       </div>
     </div>

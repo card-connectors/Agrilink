@@ -128,7 +128,7 @@ const Navbar = ({ onLoginClick }) => {
                 onClick={closeMobileMenu}
               >
                 <div className="w-2 h-2 bg-gray-600 rounded-full mr-3 group-hover:scale-125 transition-transform duration-300"></div>
-                Landowners
+                Land Owners
               </Link>
 
               <Link
@@ -138,15 +138,6 @@ const Navbar = ({ onLoginClick }) => {
               >
                 <div className="w-2 h-2 bg-gray-600 rounded-full mr-3 group-hover:scale-125 transition-transform duration-300"></div>
                 Farmers
-              </Link>
-
-              <Link
-                to="/beekeepers"
-                className="flex items-center py-4 px-4 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all duration-300 group"
-                onClick={closeMobileMenu}
-              >
-                <div className="w-2 h-2 bg-gray-600 rounded-full mr-3 group-hover:scale-125 transition-transform duration-300"></div>
-                Beekeepers
               </Link>
 
               <Link

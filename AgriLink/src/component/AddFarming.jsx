@@ -1,14 +1,12 @@
+// components/AddFarmingModal.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-const AddFarming = () => {
-  const navigate = useNavigate();
-
+const AddFarming = ({ onClose, onAdd }) => {
   const [farming, setFarming] = useState({
+    experience: "",
     type: "",
-    landNeeded: "",
-    productsPlanned: [],
     description: "",
+    photo: null,
   });
 
   const handleChange = (e) => {
@@ -16,34 +14,35 @@ const AddFarming = () => {
     setFarming({ ...farming, [name]: value });
   };
 
-  const handleCheckboxChange = (e) => {
-    const { value, checked } = e.target;
-    if (checked) {
-      setFarming({ ...farming, productsPlanned: [...farming.productsPlanned, value] });
-    } else {
-      setFarming({
-        ...farming,
-        productsPlanned: farming.productsPlanned.filter((p) => p !== value),
-      });
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFarming({ ...farming, photo: URL.createObjectURL(file) });
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Farming details submitted:", farming);
-    alert("Farming details added successfully!");
-    navigate("/dashboard");
+    onAdd(farming); // Pass data to parent
+    onClose(); // Close modal
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-      <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-2xl">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-          🌾 Add Farming Details
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black bg-opacity-50"
+        onClick={onClose} // click outside to close
+      ></div>
+
+      {/* Modal Card */}
+      <div className="relative bg-white shadow-xl rounded-xl p-6 w-full max-w-lg z-10">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+          Add Farming Details
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Type of Farming */}
+          {/* Type */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Type of Farming
@@ -55,7 +54,7 @@ const AddFarming = () => {
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"
               required
             >
-              <option value="">Select type</option>
+              <option value="" selected disabled>Select type</option>
               <option value="crops">Crops</option>
               <option value="vegetables">Vegetables</option>
               <option value="fruits">Fruits</option>
@@ -65,41 +64,20 @@ const AddFarming = () => {
             </select>
           </div>
 
-          {/* Land Needed */}
+          {/* Experience */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Land Needed (in acres)
+              Experience (years)
             </label>
             <input
               type="number"
-              name="landNeeded"
-              value={farming.landNeeded}
+              name="experience"
+              value={farming.experience}
               onChange={handleChange}
-              placeholder="Enter land needed in acres"
+              placeholder="Enter experience"
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"
               required
             />
-          </div>
-
-          {/* Products Planned */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Products Planned
-            </label>
-            <div className="flex flex-wrap gap-4">
-              {["Vegetables", "Fruits", "Mushroom", "Honey", "Other"].map((product) => (
-                <label key={product} className="inline-flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    value={product}
-                    checked={farming.productsPlanned.includes(product)}
-                    onChange={handleCheckboxChange}
-                    className="h-4 w-4 text-green-600"
-                  />
-                  <span className="text-gray-700">{product}</span>
-                </label>
-              ))}
-            </div>
           </div>
 
           {/* Description */}
@@ -111,18 +89,51 @@ const AddFarming = () => {
               name="description"
               value={farming.description}
               onChange={handleChange}
-              placeholder="Add any additional details about your farming plan..."
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 h-24"
+              placeholder="Add any additional details..."
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 h-20"
+              required
             />
           </div>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-lg transition-colors duration-200"
-          >
-            Submit Farming Details
-          </button>
+          {/* Photo */}
+          <div>
+            <label className="cursor-pointer flex flex-col items-center justify-center">
+              {farming.photo ? (
+                <img
+                  src={farming.photo}
+                  alt="Farming"
+                  className="w-32 h-32 object-cover border border-gray-300 mb-2"
+                />
+              ) : (
+                <div className="w-32 h-32 bg-gray-200 border border-gray-300 flex items-center justify-center text-gray-400 mb-2">
+                  Click to Upload
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                className="hidden"
+              />
+            </label>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-end gap-2 mt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
+            >
+              Add
+            </button>
+          </div>
         </form>
       </div>
     </div>

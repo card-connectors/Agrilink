@@ -1,14 +1,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import ActivityBannerSection from "./ActivityBannerSection";
-import ManageDataSection from "./ManageDataSection";
+import ActivityBannerSection from "../component/ActivityBannerSection"
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
   const icons = {
     sent: (
-      <div className="p-3 rounded-2xl bg-gradient-to-br from-green-500/10 to-green-300/10">
+      <div className="p-3 rounded-2xl bg-linear-to-br from-green-500/10 to-green-300/10">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="w-9 h-9 text-green-600"
@@ -26,7 +25,7 @@ const Dashboard = () => {
       </div>
     ),
     received: (
-      <div className="p-3 rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-300/10">
+      <div className="p-3 rounded-2xl bg-linear-to-br from-blue-500/10 to-blue-300/10">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="w-9 h-9 text-blue-600"
@@ -44,7 +43,7 @@ const Dashboard = () => {
       </div>
     ),
     yourOrders: (
-      <div className="p-3 rounded-2xl bg-gradient-to-br from-orange-500/10 to-orange-300/10">
+      <div className="p-3 rounded-2xl bg-linear-to-br from-orange-500/10 to-orange-300/10">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="w-9 h-9 text-orange-600"
@@ -59,20 +58,20 @@ const Dashboard = () => {
       </div>
     ),
     ordersReceived: (
-      <div className="p-3 rounded-2xl bg-gradient-to-br from-green-400/10 to-green-200/20 shadow-inner">
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="w-9 h-9 text-green-600"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    strokeWidth={2}
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" />
-    <path strokeLinecap="round" strokeLinejoin="round" d="M21 12v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6" />
-    <path strokeLinecap="round" strokeLinejoin="round" d="M7 10V6a1 1 0 011-1h8a1 1 0 011 1v4" />
-  </svg>
-</div>
+      <div className="p-3 rounded-2xl bg-linear-to-br from-green-400/10 to-green-200/20 shadow-inner">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-9 h-9 text-green-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 12v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M7 10V6a1 1 0 011-1h8a1 1 0 011 1v4" />
+        </svg>
+      </div>
 
 
 
@@ -132,7 +131,7 @@ const Dashboard = () => {
             onClick={() => navigate(card.path)}
             className="relative flex flex-col p-6 rounded-3xl bg-white/70 border border-gray-200 backdrop-blur-md shadow-md hover:shadow-2xl hover:scale-[1.03] transition-all duration-400 cursor-pointer overflow-hidden"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/30 to-transparent group-hover:from-green-100/20 opacity-0 hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
+            <div className="absolute inset-0 bg-linear-to-br from-white/0 via-white/30 to-transparent group-hover:from-green-100/20 opacity-0 hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
 
             <div className="flex justify-between items-center mb-5">
               {card.icon}
@@ -168,8 +167,8 @@ const Dashboard = () => {
           </div>
         ))}
       </div>
-      {/* <ManageDataSection/> */}
-      <ActivityBannerSection/>
+
+        <ActivityBannerSection/>
     </div>
   );
 };

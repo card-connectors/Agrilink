@@ -4,40 +4,40 @@ import { useNavigate } from "react-router-dom";
 const ActivityBannerSection = () => {
   const navigate = useNavigate();
 
-  const actions = [
-    {
-      icon: "🏞️",
-      title: "Add Your Land Details",
-      description:
-        "Own land? List your land and connect with verified farmers who are ready to cultivate.",
-      button: "Add Land",
-      color: "from-green-50 to-green-100",
-      link: "/add-land",
-    },
-    {
-      icon: "🌾",
-      title: "Add Farming Details",
-      description:
-        "Are you a farmer? Add your farming details and get connected with landowners or buyers.",
-      button: "Add Farming Info",
-      color: "from-yellow-50 to-yellow-100",
-      link: "/add-farming",
-    },
-    {
-      icon: "🚚",
-      title: "Start Selling Products",
-      description:
-        "Supply organic vegetables, honey, mushrooms, or fruits directly to customers and markets.",
-      button: "Add Products",
-      color: "from-blue-50 to-blue-100",
-      link: "/add-product",
-    },
-  ];
+const actions = [
+  {
+    icon: "🏞️",
+    title: "Manage Your Land Details",
+    description:
+      "Own land? Manage your land listings and connect with verified farmers who are ready to cultivate.",
+    button: "Manage Land",
+    color: "from-green-50 to-green-100",
+    link: "/manage-land",
+  },
+  {
+    icon: "🌾",
+    title: "Manage Farming Details",
+    description:
+      "Are you a farmer? Manage your farming information and get connected with landowners or buyers.",
+    button: "Manage Farming Info",
+    color: "from-yellow-50 to-yellow-100",
+    link: "/manage-farming",
+  },
+  {
+    icon: "🚚",
+    title: "Manage Your Products",
+    description:
+      "Supply organic vegetables, honey, mushrooms, or fruits directly to customers and markets.",
+    button: "Manage Products",
+    color: "from-blue-50 to-blue-100",
+    link: "/manage-products",
+  },
+];
 
   return (
     <div className="w-full pt-10 px-6 bg-gray-50">
       <div className="text-center mb-10">
-        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-semibold mb-3 shadow-sm">
+        <div className="inline-flex items-center gap-2 bg-linear-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-semibold mb-3 shadow-sm">
           <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
           Exclusive Opportunity
         </div>
@@ -53,7 +53,7 @@ const ActivityBannerSection = () => {
         {actions.map((item, index) => (
           <div
             key={index}
-            className={`bg-gradient-to-r ${item.color} rounded-2xl shadow-md p-6 flex flex-col justify-between hover:shadow-lg transition-all duration-300`}
+            className={`bg-linear-to-r ${item.color} rounded-2xl shadow-md p-6 flex flex-col justify-between hover:shadow-lg transition-all duration-300`}
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="bg-white rounded-full p-4 shadow text-3xl">
@@ -64,7 +64,7 @@ const ActivityBannerSection = () => {
               </h3>
             </div>
 
-            <p className="text-gray-600 text-sm flex-grow">{item.description}</p>
+            <p className="text-gray-600 text-sm grow">{item.description}</p>
 
             <button
               onClick={() => navigate(item.link)}

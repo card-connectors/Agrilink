@@ -98,24 +98,12 @@ const Home = () => {
   ];
 
 
-  // Stats
-  const stats = [
-    { id: 1, number: "250+", label: "Active Farmers" },
-    { id: 2, number: "500+", label: "Products Listed" },
-    { id: 3, number: "150+", label: "Landowners" },
-    { id: 4, number: "95%", label: "Satisfaction Rate" }
-  ];
 
-  // Handle search
-  // const handleSearch = (e) => {
-  //   e.preventDefault();
-  //   alert(`Searching for: ${searchTerm}`);
-  //   setSearchTerm('');
-  // };
+
 
   return (
     <div className="min-h-screen bg-white">
-      
+
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-green-50 to-blue-50 py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
@@ -125,50 +113,34 @@ const Home = () => {
           <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
             Find farmers, land, and agricultural products all in one place
           </p>
-          
+
           {/* Quick Links */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Link
               to="/farmers"
               className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors duration-300 shadow-lg hover:shadow-xl"
             >
-              👨‍🌾 Browse Farmers
+              Browse Farmers
             </Link>
             <Link
               to="/products"
               className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors duration-300 shadow-lg hover:shadow-xl"
             >
-              🛒 View Products
+              View Products
             </Link>
             <Link
               to="/landowners"
               className="bg-amber-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-amber-700 transition-colors duration-300 shadow-lg hover:shadow-xl"
             >
-              🏡 Find Lands
+              Find Lands
             </Link>
           </div>
 
-         
+
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat) => (
-              <div key={stat.id} className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-green-600 mb-2">
-                  {stat.number}
-                </div>
-                <div className="text-gray-600 font-medium">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* Featured Farmers Section */}
       <section className="py-16 bg-gray-50">
@@ -177,7 +149,7 @@ const Home = () => {
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Featured Farmers</h2>
             <p className="text-xl text-gray-600">Meet our dedicated farming community</p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredFarmers.map((farmer) => (
               <div key={farmer.id} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
@@ -186,7 +158,24 @@ const Home = () => {
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{farmer.name}</h3>
                   <p className="text-green-600 font-semibold mb-1">{farmer.type}</p>
                   <p className="text-gray-600 flex items-center">
-                    <span className="mr-2">📍</span>
+                    <span className="mr-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-gray-500 inline-block"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+                        <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" />
+                      </svg>
+                    </span>
                     {farmer.location}
                   </p>
                 </div>
@@ -203,7 +192,7 @@ const Home = () => {
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Featured Products</h2>
             <p className="text-xl text-gray-600">Fresh from our farms to you</p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredProducts.map((product) => (
               <div key={product.id} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100">
@@ -231,7 +220,7 @@ const Home = () => {
             <h2 className="text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
             <p className="text-xl text-gray-600">Get started in 4 simple steps</p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {steps.map((step) => (
               <div key={step.id} className="text-center">

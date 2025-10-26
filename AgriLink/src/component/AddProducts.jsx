@@ -1,17 +1,17 @@
+// components/AddProductsModal.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-const AddProducts = () => {
-  const navigate = useNavigate();
-
+const AddProducts = ({ onClose, onAdd }) => {
   const [product, setProduct] = useState({
     name: "",
     category: "",
-    quantity: "",
-    price: "",
+    minQuantity: "", // minimum bulk purchase in kg
+    price: "",       // price per kg
     otherName: "",
     description: "",
   });
+
+  const productCategories = ["Vegetables", "Fruits", "Mushroom", "Honey", "Other"];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,23 +29,20 @@ const AddProducts = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // If "Other" is selected, use otherName as category
     const finalProduct = { ...product };
     if (product.category === "Other") {
       finalProduct.category = product.otherName || "Other";
     }
-    console.log("Product submitted:", finalProduct);
-    alert("Product added successfully!");
-    navigate("/dashboard");
+    onAdd(finalProduct); // send data to parent
+    onClose();           // close modal
   };
 
-  const productCategories = ["Vegetables", "Fruits", "Mushroom", "Honey", "Other"];
-
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-      <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-2xl">
+    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-4">
+      {/* Modal Card */}
+      <div className="relative bg-white shadow-xl rounded-xl p-6 w-full max-w-2xl mx-auto overflow-y-auto max-h-[90vh]">
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-          🛒 Add Product
+          Add Product
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -86,7 +83,6 @@ const AddProducts = () => {
               ))}
             </div>
 
-            {/* Input for Other */}
             {product.category === "Other" && (
               <input
                 type="text"
@@ -100,34 +96,36 @@ const AddProducts = () => {
             )}
           </div>
 
-          {/* Quantity */}
+          {/* Minimum Bulk Purchase */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Quantity (in units)
+              Minimum Bulk Purchase (kg)
             </label>
             <input
               type="number"
-              name="quantity"
-              value={product.quantity}
+              name="minQuantity"
+              value={product.minQuantity}
               onChange={handleChange}
-              placeholder="Enter quantity"
+              placeholder="Enter minimum bulk purchase in kg"
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"
+              min={1}
               required
             />
           </div>
 
-          {/* Price */}
+          {/* Price per kg */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Price (per unit in ₹)
+              Price per kg (₹)
             </label>
             <input
               type="number"
               name="price"
               value={product.price}
               onChange={handleChange}
-              placeholder="Enter price per unit"
+              placeholder="Enter price per kg"
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"
+              min={1}
               required
             />
           </div>
@@ -141,18 +139,27 @@ const AddProducts = () => {
               name="description"
               value={product.description}
               onChange={handleChange}
-              placeholder="Add any additional details about your product..."
+              placeholder="Add any additional details..."
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 h-24"
             />
           </div>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-lg transition-colors duration-200"
-          >
-            Add Product
-          </button>
+          {/* Buttons */}
+          <div className="flex justify-end gap-2 mt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
+            >
+              Add
+            </button>
+          </div>
         </form>
       </div>
     </div>

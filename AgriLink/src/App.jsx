@@ -15,12 +15,15 @@ import SentRequest from "./component/SentRequest";
 import LandDetails from "./component/LandDetails";
 import FarmerDetails from "./component/FarmerDetails";
 import OrdersReceived from "./component/OrdersReceived";
-import Dashboard from "./component/Dashboard";
+import Dashboard from "./pages/Dashboard";
 import ProfileSetup from "./component/ProfileSetup";
 import AddLand from "./component/AddLand";
 import AddFarming from "./component/AddFarming";
 import AddProducts from "./component/AddProducts";
 import ProductDetails from "./component/ProductDetails";
+import ManageLand from "./component/ManageLand";
+import ManageFarming from "./component/ManageFarming";
+import ManageProducts from "./component/ManageProducts";
 
 
 function App() {
@@ -64,6 +67,11 @@ function App() {
           <Route path="/add-land" element={<AddLand/>} />
           <Route path="/add-farming" element={<AddFarming/>} />
           <Route path="/add-product" element={<AddProducts/>} />
+          <Route path="/manage-land" element={<ManageLand/>} />
+          <Route path="/manage-farming" element={<ManageFarming/>} />
+          <Route path="/manage-products" element={<ManageProducts/>} />
+
+
 
         </Routes>
       </main>

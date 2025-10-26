@@ -146,8 +146,6 @@ const ProfileSetup = () => {
             >
               <option value="">Select role</option>
               <option value="customer">Customer</option>
-              <option value="farmer">Farmer</option>
-              <option value="landowner">Land Owner</option>
               <option value="delivery">Delivery Person</option>
             </select>
           </div>
