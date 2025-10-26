@@ -30,11 +30,28 @@ const AddLand = ({ onClose, onAdd }) => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onAdd(land); // send data to parent
-    onClose(); // close modal
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/auth/land/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(land),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      alert("Error: " + JSON.stringify(err));
+    } else {
+      alert("Land details added successfully!");
+      navigate("/dashboard");
+    }
+  } catch (err) {
+    alert("Error submitting land details!");
+  }
+};
+
+
+  
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">

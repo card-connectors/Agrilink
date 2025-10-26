@@ -27,15 +27,31 @@ const AddProducts = ({ onClose, onAdd }) => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const finalProduct = { ...product };
-    if (product.category === "Other") {
-      finalProduct.category = product.otherName || "Other";
-    }
-    onAdd(finalProduct); // send data to parent
-    onClose();           // close modal
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  let finalProduct = {...product};
+  if(product.category === "Other") {
+    finalProduct.category = product.otherName || "Other";
+  }
+
+  const response = await fetch("http://127.0.0.1:8000/api/auth/products/", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(finalProduct),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    alert("Failed to add product: " + JSON.stringify(errorData));
+  } else {
+    alert("Product added successfully!");
+    onAdd && onAdd();
+    onClose && onClose();
+  }
+};
+
+
+
 
   return (
     <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-4">

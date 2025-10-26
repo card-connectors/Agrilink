@@ -14,18 +14,46 @@ const AddFarming = ({ onClose, onAdd }) => {
     setFarming({ ...farming, [name]: value });
   };
 
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFarming({ ...farming, photo: URL.createObjectURL(file) });
-    }
-  };
+const handlePhotoChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    setFarming({ ...farming, photo: file });
+  }
+};
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onAdd(farming); // Pass data to parent
-    onClose(); // Close modal
-  };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const formData = new FormData();
+    formData.append("type", farming.type);
+    formData.append("experience", farming.experience);
+    formData.append("description", farming.description);
+    if (farming.photo) {
+      // Here farming.photo should be a File object, NOT a URL string
+      formData.append("photo", farming.photo);
+    }
+
+    const res = await fetch("http://127.0.0.1:8000/api/auth/farming/", {
+      method: "POST",
+      body: formData, // Notice no Content-Type header: browser sets it automatically for multipart/form-data
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      alert("Failed to add farming details: " + JSON.stringify(errorData));
+    } else {
+      alert("Farming details added successfully!");
+      if (onAdd) onAdd(); // call parent callback if passed
+      if (onClose) onClose(); // close modal
+    }
+  } catch (err) {
+    console.error("Submit error:", err);
+    alert("Error submitting form, please try again.");
+  }
+};
+
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -33,7 +61,7 @@ const AddFarming = ({ onClose, onAdd }) => {
       <div
         className="absolute inset-0 bg-black bg-opacity-50"
         onClick={onClose} // click outside to close
-      ></div>
+      ></div> 
 
       {/* Modal Card */}
       <div className="relative bg-white shadow-xl rounded-xl p-6 w-full max-w-lg z-10">

@@ -2,10 +2,14 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.decorators import parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser
 from .models import User, UserProfile
 from .serializers import UserSerializer, UserProfileSerializer
 from django.contrib.auth.hashers import check_password
 from .serializers import LandSerializer
+from .serializers import FarmingSerializer
+from .serializers import ProductSerializer
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
@@ -50,3 +54,23 @@ def add_land_view(request):
         serializer.save()
         return Response({"message": "Land details saved successfully!"}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+@parser_classes([MultiPartParser, FormParser])  # needed for file upload
+def add_farming_view(request):
+    serializer = FarmingSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Farming details saved successfully!"}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def add_product_view(request):
+    serializer = ProductSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Product added successfully"}, status=201)
+    else:
+        return Response(serializer.errors, status=400)
