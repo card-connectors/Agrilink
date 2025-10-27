@@ -1,15 +1,17 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import parser_classes
 from rest_framework.parsers import MultiPartParser, FormParser
-from .models import User, UserProfile
-from .serializers import UserSerializer, UserProfileSerializer
+from .models import User, UserProfile, Land, Farming, Product, Farmer
+from .serializers import UserSerializer, UserProfileSerializer, LandSerializer, FarmingSerializer, ProductSerializer, FarmerSerializer
 from django.contrib.auth.hashers import check_password
+from rest_framework.permissions import AllowAny
+# views.py
+
+
+
+from .models import Land
 from .serializers import LandSerializer
-from .serializers import FarmingSerializer
-from .serializers import ProductSerializer
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
@@ -57,7 +59,7 @@ def add_land_view(request):
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
-@parser_classes([MultiPartParser, FormParser])  # needed for file upload
+@parser_classes([MultiPartParser, FormParser])
 def add_farming_view(request):
     serializer = FarmingSerializer(data=request.data)
     if serializer.is_valid():
@@ -74,3 +76,20 @@ def add_product_view(request):
         return Response({"message": "Product added successfully"}, status=201)
     else:
         return Response(serializer.errors, status=400)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_farmers(request):
+    farmers = Farmer.objects.all()
+    serializer = FarmerSerializer(farmers, many=True)
+    return Response(serializer.data)
+
+
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_lands(request):
+    lands = Land.objects.all()
+    serializer = LandSerializer(lands, many=True)
+    return Response(serializer.data)

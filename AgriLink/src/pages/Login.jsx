@@ -68,7 +68,7 @@ const Login = ({ onClose }) => {
         }
 
         saveAuth(data.token, data.user);
-        navigate("/dashboard");
+        navigate("/");
 
       } else {
         // SIGNUP request

@@ -1,92 +1,25 @@
 // pages/Landowner.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Farmers = () => {
   // State for search/filter (non-functional for now)
+  const [farmers, setFarmers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('All');
+  const navigate = useNavigate();
 
-  // Sample farmer data
-  const farmers = [
-    {
-      id: 1,
-      name: "Sarah",
-      farmingType: "Beekeeping",
-      location: "Kanyakumari",
-      landRequirement: "2-5 acres",
-      description: "Experienced beekeeper with 5+ years in organic honey production. Looking for land with good floral resources.",
-      contact: "sarah.j@example.com"
-    },
-    {
-      id: 2,
-      name: "Manikandan",
-      farmingType: "Mushroom Farming",
-      location: "Erode",
-      landRequirement: "1-3 acres",
-      description: "Specializes in gourmet mushrooms. Uses sustainable farming practices and has established market connections.",
-      contact: "mani@example.com"
-    },
-    {
-      id: 3,
-      name: "Kanishka",
-      farmingType: "Mixed Farming",
-      location: "Thanjavur",
-      landRequirement: "10-15 acres",
-      description: "Looking to expand organic vegetable and fruit operations. Experienced in irrigation management.",
-      contact: "kani.farm@example.com"
-    },
-    {
-      id: 4,
-      name: "Gopinathan",
-      farmingType: "Beekeeping",
-      location: "Salem",
-      landRequirement: "3-7 acres",
-      description: "Focuses on native bee conservation and raw honey production. Prefers pesticide-free environments.",
-      contact: "gopi@example.com"
-    },
-    {
-      id: 5,
-      name: "Priya",
-      farmingType: "Mushroom Farming",
-      location: "Salem",
-      landRequirement: "2-4 acres",
-      description: "Expert in medicinal mushrooms and organic cultivation. Looking for shaded, humid land areas.",
-      contact: "priya.mushrooms@example.com"
-    },
-    {
-      id: 6,
-      name: "Thangavel",
-      farmingType: "Mixed Farming",
-      location: "Pudukkottai",
-      landRequirement: "8-12 acres",
-      description: "Seasonal crop rotation specialist. Interested in long-term land partnerships with landowners.",
-      contact: "tangavel@example.com"
-    },
-    {
-      id: 7,
-      name: "Harini",
-      farmingType: "Beekeeping",
-      location: "Viluppuram",
-      landRequirement: "1-3 acres",
-      description: "Urban beekeeper expanding to rural areas. Focuses on pollination services and honey varieties.",
-      contact: "harini.g@example.com"
-    },
-    {
-      id: 8,
-      name: "Murthy",
-      farmingType: "Mushroom Farming",
-      location: "Coimbatore",
-      landRequirement: "1-2 acres",
-      description: "Specialized in exotic mushroom varieties. Uses climate-controlled indoor and outdoor methods.",
-      contact: "thomas.kim@example.com"
-    }
-  ];
+  useEffect(() => {
+    fetch('http://127.0.0.1:8000/api/auth/farmers/')
+      .then(res => res.json())
+      .then(data => setFarmers(data));
+  }, []);
 
   // Filter farmers based on search and type (basic implementation)
   const filteredFarmers = farmers.filter(farmer => {
-    const matchesSearch = farmer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         farmer.location.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      farmer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      farmer.location.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = selectedType === 'All' || farmer.farmingType === selectedType;
     return matchesSearch && matchesType;
   });
@@ -94,12 +27,9 @@ const Farmers = () => {
   // Get unique farming types for filter
   const farmingTypes = ['All', ...new Set(farmers.map(farmer => farmer.farmingType))];
 
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        
         {/* Header Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">
@@ -143,7 +73,6 @@ const Farmers = () => {
               </select>
             </div>
           </div>
-
           {/* Results Count */}
           <div className="mt-4 text-sm text-gray-600">
             Showing {filteredFarmers.length} of {farmers.length} farmers
@@ -215,7 +144,6 @@ const Farmers = () => {
             </div>
           ))}
         </div>
-
         {/* Empty State */}
         {filteredFarmers.length === 0 && (
           <div className="text-center py-12">

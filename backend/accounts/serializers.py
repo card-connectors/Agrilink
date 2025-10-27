@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from .models import User, UserProfile
-from .models import Land, Farming, Product
-from django.contrib.auth.hashers import make_password, check_password
+from .models import User, UserProfile, Land, Farming, Product, Farmer
+from django.contrib.auth.hashers import make_password
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,7 +29,16 @@ class FarmingSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     category = serializers.CharField(required=False, allow_blank=True)
-
     class Meta:
         model = Product
+        fields = '__all__'
+
+class FarmerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Farmer
+        fields = '__all__'
+        
+class LandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Land
         fields = '__all__'

@@ -17,9 +17,9 @@ class UserProfile(models.Model):
 class Land(models.Model):
     title = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
-    area = models.FloatField()  # You may use DecimalField for more precise numbers
+    area = models.FloatField()
     soilType = models.CharField(max_length=64)
-    waterResources = models.JSONField(default=list)  # Works with MySQL 5.7+
+    waterResources = models.JSONField(default=list)
     suitableFor = models.CharField(max_length=64)
     description = models.TextField(blank=True)
 
@@ -34,5 +34,13 @@ class Product(models.Model):
     category = models.CharField(max_length=100, blank=True, null=True)
     minQuantity = models.PositiveIntegerField()
     price = models.FloatField()
-    otherName = models.CharField(max_length=255, blank=True)  # optional
+    otherName = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
+
+class Farmer(models.Model):
+    name = models.CharField(max_length=100)
+    farmingType = models.CharField(max_length=100)
+    location = models.CharField(max_length=100)
+    landRequirement = models.CharField(max_length=50)
+    description = models.TextField()
+    contact = models.EmailField()
