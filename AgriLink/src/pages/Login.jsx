@@ -1,12 +1,14 @@
 // pages/Login.jsx
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../ContextFiles/AllContext";
 
 const API_BASE = "http://127.0.0.1:8000/api/auth"; // change if your backend runs on different host/port
 
 const Login = ({ onClose }) => {
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
+   const { setUserId } = useContext(AuthContext);
 
   const [form, setForm] = useState({
     name: "",
@@ -68,6 +70,7 @@ const Login = ({ onClose }) => {
         }
 
         saveAuth(data.token, data.user);
+        setUserId(form.email); 
         navigate("/");
 
       } else {

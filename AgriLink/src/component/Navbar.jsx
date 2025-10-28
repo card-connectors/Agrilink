@@ -1,16 +1,37 @@
 // components/Navbar.jsx
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useContext, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../ContextFiles/AllContext";
+
 
 const Navbar = ({ onLoginClick }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  const { userId, setUserId } = useContext(AuthContext);
 
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+
+  // Close dropdown if clicked outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUserId(null);
+    navigate("/");
   };
 
   return (
@@ -18,7 +39,7 @@ const Navbar = ({ onLoginClick }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Navbar Container */}
         <div className="flex justify-between items-center h-20">
-          {/* Logo - Left Side */}
+          {/* Logo */}
           <Link
             to="/"
             className="flex items-center space-x-2 group"
@@ -32,55 +53,87 @@ const Navbar = ({ onLoginClick }) => {
             </span>
           </Link>
 
-          {/* Desktop Navigation - Right Side */}
+          {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link
-              to="/"
-              className="text-gray-700 hover:text-gray-900 font-medium transition-colors duration-300 relative group"
-            >
-              Home
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-800 transition-all duration-300 group-hover:w-full"></span>
-            </Link>
+            {["Home", "Landowners", "Farmers", "Products"].map((item) => (
+              <Link
+                key={item}
+                to={`/${item.toLowerCase() === "home" ? "" : item.toLowerCase()}`}
+                className="text-gray-700 hover:text-gray-900 font-medium transition-colors duration-300 relative group"
+              >
+                {item}
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-800 transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+            ))}
 
-            <Link
-              to="/landowners"
-              className="text-gray-700 hover:text-gray-900 font-medium transition-colors duration-300 relative group"
-            >
-              Landowners
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-800 transition-all duration-300 group-hover:w-full"></span>
-            </Link>
+            {/* ✅ Conditional Rendering for Auth */}
+            {userId ? (
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={toggleDropdown}
+                  className="flex items-center space-x-2 bg-gray-100 px-4 py-2 rounded-lg hover:bg-gray-200 transition-all duration-300"
+                >
+                  {/* Professional User Icon (SVG) */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 text-gray-700"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.8}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 0115 0v.75H4.5v-.75z"
+                    />
+                  </svg>
+                  <span className="font-medium text-gray-800">{userId}</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`h-4 w-4 text-gray-600 transition-transform duration-200 ${
+                      isDropdownOpen ? "rotate-180" : ""
+                    }`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
 
-            <Link
-              to="/farmers"
-              className="text-gray-700 hover:text-gray-900 font-medium transition-colors duration-300 relative group"
-            >
-              Farmers
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-800 transition-all duration-300 group-hover:w-full"></span>
-            </Link>
-
-            
-
-            <Link
-              to="/products"
-              className="text-gray-700 hover:text-gray-900 font-medium transition-colors duration-300 relative group"
-            >
-              Products
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-800 transition-all duration-300 group-hover:w-full"></span>
-            </Link>
-
-            {/* <Link 
-              to="/login" 
-              className="bg-gray-800 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-900 transition-all duration-300 shadow-md hover:shadow-lg"
-            >
-              Login/Register
-            </Link> */}
-
-            <button
-              onClick={onLoginClick}
-              className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition-colors"
-            >
-              Login / Register
-            </button>
+                {/* Dropdown Menu */}
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
+                    <Link
+                      to="/dashboard"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={onLoginClick}
+                className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition-colors"
+              >
+                Login / Register
+              </button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -108,58 +161,6 @@ const Navbar = ({ onLoginClick }) => {
             </div>
           </button>
         </div>
-
-        {/* Mobile Navigation Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden bg-white rounded-2xl mt-4 py-4 shadow-xl border border-gray-200">
-            <div className="flex flex-col space-y-1 px-3">
-              <Link
-                to="/"
-                className="flex items-center py-4 px-4 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all duration-300 group"
-                onClick={closeMobileMenu}
-              >
-                <div className="w-2 h-2 bg-gray-600 rounded-full mr-3 group-hover:scale-125 transition-transform duration-300"></div>
-                Home
-              </Link>
-
-              <Link
-                to="/landowners"
-                className="flex items-center py-4 px-4 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all duration-300 group"
-                onClick={closeMobileMenu}
-              >
-                <div className="w-2 h-2 bg-gray-600 rounded-full mr-3 group-hover:scale-125 transition-transform duration-300"></div>
-                Land Owners
-              </Link>
-
-              <Link
-                to="/farmers"
-                className="flex items-center py-4 px-4 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all duration-300 group"
-                onClick={closeMobileMenu}
-              >
-                <div className="w-2 h-2 bg-gray-600 rounded-full mr-3 group-hover:scale-125 transition-transform duration-300"></div>
-                Farmers
-              </Link>
-
-              <Link
-                to="/products"
-                className="flex items-center py-4 px-4 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all duration-300 group"
-                onClick={closeMobileMenu}
-              >
-                <div className="w-2 h-2 bg-gray-600 rounded-full mr-3 group-hover:scale-125 transition-transform duration-300"></div>
-                Products
-              </Link>
-
-              <Link
-                to="/login"
-                className="flex items-center py-4 px-4 mt-2 bg-gray-800 text-white rounded-xl hover:bg-gray-900 transition-all duration-300 shadow-md"
-                onClick={closeMobileMenu}
-              >
-                <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
-                Login/Register
-              </Link>
-            </div>
-          </div>
-        )}
       </div>
     </nav>
   );

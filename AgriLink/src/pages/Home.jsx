@@ -1,9 +1,10 @@
 // pages/Home.jsx
 // import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 
 const Home = () => {
   // const [searchTerm, setSearchTerm] = useState('');
+  const Navigate = useNavigate();
 
   // Dummy data for featured farmers
   const featuredFarmers = [
@@ -98,6 +99,15 @@ const Home = () => {
   ];
 
 
+  const handleFarmerDetails = ()=>{
+    Navigate("/farmersdetails")
+  }
+
+    const handleProductDetails = ()=>{
+    Navigate("/product-details")
+  }
+
+
 
 
 
@@ -105,7 +115,7 @@ const Home = () => {
     <div className="min-h-screen bg-white">
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-green-50 to-blue-50 py-20 px-4 sm:px-6 lg:px-8">
+      <section className="bg-linear-to-br from-green-50 to-blue-50 py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
             Connect Farmers and Landowners Easily
@@ -178,6 +188,11 @@ const Home = () => {
                     </span>
                     {farmer.location}
                   </p>
+                  <button 
+                  onClick={handleFarmerDetails}
+                  className="bg-green-600 text-white px-4 py-2 mt-3 rounded-lg hover:bg-green-700 transition-colors duration-300">
+                    View Details
+                  </button>
                 </div>
               </div>
             ))}
@@ -202,7 +217,9 @@ const Home = () => {
                   <p className="text-gray-600 mb-2">{product.type}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-md font-bold text-green-600">₹{product.price} /Kg</span>
-                    <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-300">
+                    <button 
+                    onClick={handleProductDetails}
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-300">
                       View Details
                     </button>
                   </div>

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const ProductDetails = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('250g');
+  const Navigate = useNavigate();
 
   const product = {
     name: "Raw Organic Honey",
@@ -129,7 +131,9 @@ const ProductDetails = () => {
 
                 {/* Action Buttons */}
                 <div className="flex space-x-4 mt-4">
-                  <button className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition duration-200">
+                  <button 
+                  onClick={()=>(Navigate("/place-order"))}
+                  className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition duration-200">
                     Place Order
                   </button>
                 </div>

@@ -24,6 +24,9 @@ import ProductDetails from "./component/ProductDetails";
 import ManageLand from "./component/ManageLand";
 import ManageFarming from "./component/ManageFarming";
 import ManageProducts from "./component/ManageProducts";
+import PlaceOrder from "./component/PlaceOrder";
+import Authcheck from "./component/Authcheck";
+import AuthProvider from "./ContextFiles/AuthProvider";
 
 
 function App() {
@@ -44,9 +47,10 @@ function App() {
     <div className="min-h-screen bg-gray-50">
       <Navbar onLoginClick={openLogin} />
       {/* Navbar visible on all pages */}
-
       {/* Main content area */}
+
       <main className="container mx-auto px-4 py-8">
+
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/landowners" element={<Landowners />} />
@@ -70,10 +74,12 @@ function App() {
           <Route path="/manage-land" element={<ManageLand/>} />
           <Route path="/manage-farming" element={<ManageFarming/>} />
           <Route path="/manage-products" element={<ManageProducts/>} />
+          <Route path="/place-order" element={<PlaceOrder/>} />
 
 
 
         </Routes>
+
       </main>
       {showLogin && <Login onClose={closeLogin} />}
       <Footer />
