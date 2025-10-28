@@ -16,7 +16,7 @@ const [userId, setUserId] = useState(null);
   };
   return (    
     <>
-    <AuthContext.Provider value={{ userId, isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ userId, isLoggedIn, setUserId, login, logout }}>
         {children}
     </AuthContext.Provider>
     </>

@@ -3,14 +3,13 @@ import { useState, useContext, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../ContextFiles/AllContext";
 
-
 const Navbar = ({ onLoginClick }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  const { userId, setUserId } = useContext(AuthContext);
+  const { userId, logout } = useContext(AuthContext);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
@@ -30,7 +29,7 @@ const Navbar = ({ onLoginClick }) => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    setUserId(null);
+    logout();
     navigate("/");
   };
 
@@ -55,7 +54,7 @@ const Navbar = ({ onLoginClick }) => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            {["Home", "Landowners", "Farmers", "Products"].map((item) => (
+            {["Home", "LandOwners", "Farmers", "Products"].map((item) => (
               <Link
                 key={item}
                 to={`/${item.toLowerCase() === "home" ? "" : item.toLowerCase()}`}
@@ -85,15 +84,15 @@ const Navbar = ({ onLoginClick }) => {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 0115 0v.75H4.5v-.75z"
+                      d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zM4 20v-1c0-2.21 3.58-4 8-4s8 1.79 8 4v1"
                     />
                   </svg>
+
                   <span className="font-medium text-gray-800">{userId}</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className={`h-4 w-4 text-gray-600 transition-transform duration-200 ${
-                      isDropdownOpen ? "rotate-180" : ""
-                    }`}
+                    className={`h-4 w-4 text-gray-600 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""
+                      }`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -144,19 +143,16 @@ const Navbar = ({ onLoginClick }) => {
           >
             <div className="w-6 h-6 flex flex-col justify-between relative">
               <span
-                className={`h-0.5 w-full bg-gray-700 transition-all duration-300 rounded-full ${
-                  isMobileMenuOpen ? "rotate-45 translate-y-2.5" : ""
-                }`}
+                className={`h-0.5 w-full bg-gray-700 transition-all duration-300 rounded-full ${isMobileMenuOpen ? "rotate-45 translate-y-2.5" : ""
+                  }`}
               ></span>
               <span
-                className={`h-0.5 w-full bg-gray-700 transition-all duration-300 rounded-full ${
-                  isMobileMenuOpen ? "opacity-0" : "opacity-100"
-                }`}
+                className={`h-0.5 w-full bg-gray-700 transition-all duration-300 rounded-full ${isMobileMenuOpen ? "opacity-0" : "opacity-100"
+                  }`}
               ></span>
               <span
-                className={`h-0.5 w-full bg-gray-700 transition-all duration-300 rounded-full ${
-                  isMobileMenuOpen ? "-rotate-45 -translate-y-2.5" : ""
-                }`}
+                className={`h-0.5 w-full bg-gray-700 transition-all duration-300 rounded-full ${isMobileMenuOpen ? "-rotate-45 -translate-y-2.5" : ""
+                  }`}
               ></span>
             </div>
           </button>
