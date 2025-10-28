@@ -1,147 +1,261 @@
-import React, { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../ContextFiles/AllContext';
+// pages/Login.jsx
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../ContextFiles/AllContext";
 
-const API_BASE = "http://127.0.0.1:8000/api/auth";
+const API_BASE = "http://127.0.0.1:8000/api/auth"; // change if your backend runs on different host/port
 
 const Login = ({ onClose }) => {
-  const [form, setForm] = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { setUserId } = useContext(AuthContext);
+  const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
+   const { setUserId } = useContext(AuthContext);
 
-  // Simple email regex for validation
-  const emailRegex = /^\S+@\S+\.\S+$/;
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [error, setError] = useState(""); // inline error message
+  const [loading, setLoading] = useState(false); // show loading while request in progress
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    if (error) setError('');
+
+    // Clear error while typing in password fields
+    if (name === "confirmPassword" || name === "password" || name === "email") {
+      setError("");
+    }
   };
 
-  const validateForm = () => {
-    if (!emailRegex.test(form.email)) {
-      setError("Please enter a valid email");
-      return false;
-    }
-    if (form.password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return false;
-    }
-    return true;
+  // Helper: save token & user
+  const saveAuth = (token, user) => {
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
-    if (!validateForm()) return;
+    // Client-side validation for signup
+    if (!isLogin && form.password !== form.confirmPassword) {
+      setError("Passwords do not match!");
+      return;
+    }
 
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/login/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: form.email, password: form.password })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setUserId(data.user.email); // save email as userId in context
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        navigate('/');
-        if (onClose) onClose();
+      if (isLogin) {
+        // LOGIN request
+        const body = {
+          username: form.email, // backend accepts username or email in 'username'
+          password: form.password,
+        };
+
+        const res = await fetch(`${API_BASE}/login/`, {
+          method: "POST", 
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          // prefer returned message keys
+          setError(data.error || data.detail || "Login failed. Check credentials.");
+          setLoading(false);
+          return;
+        }
+
+        saveAuth(data.token, data.user);
+        setUserId(form.email); 
+        navigate("/");
+
       } else {
-        setError(data.error || 'Login failed');
+        // SIGNUP request
+        const body = {
+          name: form.name,
+          email: form.email,
+          password: form.password,
+          confirmPassword: form.confirmPassword,
+        };
+
+        const res = await fetch(`${API_BASE}/register/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          // serializer returns dict of errors; show a friendly message
+          const firstErr =
+            (typeof data === "object" && Object.values(data).flat()[0]) ||
+            data.error ||
+            JSON.stringify(data);
+          setError(firstErr);
+          setLoading(false);
+          return;
+        }
+
+        // Signup success
+        saveAuth(data.token, data.user);
+        setUserId(form.email); 
+        navigate("/profileSetup");
       }
-    } catch {
-      setError('Server error');
+
+      // reset form on success
+      setForm({ name: "", email: "", password: "", confirmPassword: "" });
+      if (onClose) onClose();
+    } catch (err) {
+      console.error("Auth error:", err);
+      setError("Server error. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget && onClose) onClose();
+  };
+
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-      onClick={(e) => e.target === e.currentTarget && onClose && onClose()}
+      onClick={handleBackdropClick}
     >
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
         <div className="flex justify-end pt-4 pr-4">
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100"
-            aria-label="Close login modal"
           >
             <svg
               className="w-6 h-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
-              aria-hidden="true"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
 
         <div className="p-6">
           <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">
-            Login
+            {isLogin ? "Login" : "Sign Up"}
           </h2>
           <p className="text-gray-600 text-center text-sm mb-6">
-            Enter your credentials to access your account
+            {isLogin
+              ? "Enter your credentials to access your account"
+              : "Create your account to get started"}
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  placeholder="Enter your name"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+            )}
+
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Email Address
               </label>
               <input
-                id="email"
-                name="email"
                 type="email"
+                name="email"
                 value={form.email}
                 onChange={handleChange}
                 placeholder="you@example.com"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
-                aria-describedby="email-error"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
               <input
-                id="password"
-                name="password"
                 type="password"
+                name="password"
                 value={form.password}
                 onChange={handleChange}
                 placeholder="Enter your password"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
-                minLength={6}
-                aria-describedby="password-error"
               />
             </div>
 
-            {error && <p id="email-error" className="text-red-500 text-sm">{error}</p>}
+            {!isLogin && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={form.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Re-enter your password"
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                    error ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
+                  }`}
+                  required
+                />
+                {error && !isLogin && (
+                  <p className="text-red-500 text-sm mt-1">{error}</p>
+                )}
+              </div>
+            )}
+
+            {/* Show general error when login or other errors */}
+            {error && isLogin && <p className="text-red-500 text-sm">{error}</p>}
 
             <button
               type="submit"
               disabled={loading}
               className={`w-full py-3 rounded-lg text-white font-medium transition-colors duration-200 ${
-                loading ? "opacity-70 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-              }`}
+                isLogin ? "bg-blue-600 hover:bg-blue-700" : "bg-green-600 hover:bg-green-700"
+              } ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? (isLogin ? "Logging in..." : "Signing up...") : (isLogin ? "Login" : "Sign Up")}
             </button>
           </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-gray-600">
+              {isLogin ? "Don't have an account? " : "Already have an account? "}
+              <button
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setError("");
+                }}
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
+                {isLogin ? "Sign Up" : "Login"}
+              </button>
+            </p>
+          </div>
         </div>
       </div>
     </div>

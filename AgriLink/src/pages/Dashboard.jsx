@@ -15,7 +15,7 @@ function Dashboard() {
         .then(res => res.json())
         .then(data => {
           if (data.userType) {
-            console.log(data.userType)
+            // console.log(data.userType)
             setUserRole(data.userType);
           }
           setLoading(false);
