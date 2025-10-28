@@ -6,7 +6,7 @@ from .models import User, UserProfile, Land, Farming, Product, Farmer
 from .serializers import UserSerializer, UserProfileSerializer, LandSerializer, FarmingSerializer, ProductSerializer, FarmerSerializer
 from django.contrib.auth.hashers import check_password
 from rest_framework.permissions import AllowAny
-# views.py
+from .models import User, UserProfile
 
 
 
@@ -84,12 +84,26 @@ def get_farmers(request):
     serializer = FarmerSerializer(farmers, many=True)
     return Response(serializer.data)
 
-
-
-
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def get_lands(request):
     lands = Land.objects.all()
     serializer = LandSerializer(lands, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_user_role(request):
+    email = request.GET.get('email')
+    if not email:
+        return Response({"error": "Email parameter is required."}, status=400)
+    try:
+        user = User.objects.get(email=email)
+        profile = UserProfile.objects.get(user=user)
+        return Response({"userType": profile.userType}, status=200)
+    except User.DoesNotExist:
+        return Response({"error": "User not found."}, status=404)
+    except UserProfile.DoesNotExist:
+        return Response({"error": "UserProfile not found for this user."}, status=404)
+    
+    
