@@ -54,7 +54,7 @@ const Navbar = ({ onLoginClick }) => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            {["Home", "LandOwners", "Farmers", "Products"].map((item) => (
+            {["Home", "Landowners", "Farmers", "Products"].map((item) => (
               <Link
                 key={item}
                 to={`/${item.toLowerCase() === "home" ? "" : item.toLowerCase()}`}

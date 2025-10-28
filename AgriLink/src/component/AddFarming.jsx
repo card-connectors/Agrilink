@@ -1,7 +1,10 @@
 // components/AddFarmingModal.jsx
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { AuthContext } from "../ContextFiles/AllContext";
 
 const AddFarming = ({ onClose, onAdd }) => {
+  const { userId } = useContext(AuthContext); // user email
+
   const [farming, setFarming] = useState({
     experience: "",
     type: "",
@@ -9,65 +12,53 @@ const AddFarming = ({ onClose, onAdd }) => {
     photo: null,
   });
 
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [error, setError] = useState("");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFarming({ ...farming, [name]: value });
   };
 
-const handlePhotoChange = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    setFarming({ ...farming, photo: file });
-  }
-};
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFarming({ ...farming, photo: file });
+      setPhotoPreview(URL.createObjectURL(file)); // preview
+    }
+  };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError("");
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  try {
-    const formData = new FormData();
-    formData.append("type", farming.type);
-    formData.append("experience", farming.experience);
-    formData.append("description", farming.description);
-    if (farming.photo) {
-      // Here farming.photo should be a File object, NOT a URL string
-      formData.append("photo", farming.photo);
+    if (!farming.type || !farming.experience || !farming.description) {
+      setError("All fields are required.");
+      return;
     }
 
-    const res = await fetch("http://127.0.0.1:8000/api/auth/farming/", {
-      method: "POST",
-      body: formData, // Notice no Content-Type header: browser sets it automatically for multipart/form-data
-    });
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      alert("Failed to add farming details: " + JSON.stringify(errorData));
-    } else {
-      alert("Farming details added successfully!");
-      if (onAdd) onAdd(); // call parent callback if passed
-      if (onClose) onClose(); // close modal
-    }
-  } catch (err) {
-    console.error("Submit error:", err);
-    alert("Error submitting form, please try again.");
-  }
-};
-
+    if (onAdd) onAdd(farming);
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={onClose} // click outside to close
-      ></div> 
+        onClick={onClose}
+      ></div>
 
       {/* Modal Card */}
       <div className="relative bg-white shadow-xl rounded-xl p-6 w-full max-w-lg z-10">
         <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
           Add Farming Details
         </h2>
+
+        {error && (
+          <div className="text-red-600 text-center text-sm mb-3">{error}</div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Type */}
@@ -82,7 +73,7 @@ const handleSubmit = async (e) => {
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"
               required
             >
-              <option value="" selected disabled>Select type</option>
+              <option value="">Select type</option>
               <option value="crops">Crops</option>
               <option value="vegetables">Vegetables</option>
               <option value="fruits">Fruits</option>
@@ -123,17 +114,17 @@ const handleSubmit = async (e) => {
             />
           </div>
 
-          {/* Photo */}
+          {/* Photo Upload */}
           <div>
             <label className="cursor-pointer flex flex-col items-center justify-center">
-              {farming.photo ? (
+              {photoPreview ? (
                 <img
-                  src={farming.photo}
-                  alt="Farming"
-                  className="w-32 h-32 object-cover border border-gray-300 mb-2"
+                  src={photoPreview}
+                  alt="Farming preview"
+                  className="w-32 h-32 object-cover border border-gray-300 mb-2 rounded"
                 />
               ) : (
-                <div className="w-32 h-32 bg-gray-200 border border-gray-300 flex items-center justify-center text-gray-400 mb-2">
+                <div className="w-32 h-32 bg-gray-200 border border-gray-300 flex items-center justify-center text-gray-400 mb-2 rounded">
                   Click to Upload
                 </div>
               )}

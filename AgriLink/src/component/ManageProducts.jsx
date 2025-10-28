@@ -1,8 +1,12 @@
 // pages/ManageProducts.jsx
-import { useState } from "react";
+import { useContext, useState } from "react";
 import AddProducts from "./AddProducts";
+import { AuthContext } from "../ContextFiles/AllContext";
 
 const ManageProducts = () => {
+
+    const { userId } = useContext(AuthContext); // user email
+  
   const [products, setProducts] = useState([
     { id: 1, name: "Raw Organic Honey", category: "Honey", minQuantity: 5, price: 200, available: true },
     { id: 2, name: "Organic Tomatoes", category: "Vegetables", minQuantity: 3, price: 30, available: true },

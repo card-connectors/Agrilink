@@ -1,7 +1,12 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import AddFarming from "./AddFarming";
+import { AuthContext } from "../ContextFiles/AllContext";
 
 const ManageFarming = () => {
+
+  const { userId } = useContext(AuthContext); // user email
+
+
   const [farms, setFarms] = useState([
     { id: 1, crop: "Mixed Farming", type: "Mixed", experience: 5, available: true },
     { id: 2, crop: "Honey Bee", type: "Apiculture", experience: 3, available: true },
@@ -42,9 +47,8 @@ const ManageFarming = () => {
           {farms.map((farm) => (
             <div
               key={farm.id}
-              className={`border p-4 rounded-lg shadow-sm hover:shadow-md transition ${
-                farm.available ? "" : "bg-gray-100 opacity-70"
-              }`}
+              className={`border p-4 rounded-lg shadow-sm hover:shadow-md transition ${farm.available ? "" : "bg-gray-100 opacity-70"
+                }`}
             >
               <h2 className="text-xl font-semibold">{farm.type}</h2>
               <p>Type: {farm.type}</p>

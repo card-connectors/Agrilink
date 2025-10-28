@@ -124,7 +124,7 @@ const LandCard = ({ land }) => {
       <div className="flex space-x-3">
         <button
           onClick={handleButtonClick}
-          className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 font-semibold shadow-md hover:shadow-lg"
+          className="flex-1 bg-linear-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 font-semibold shadow-md hover:shadow-lg"
         >
           Explore Land
         </button>

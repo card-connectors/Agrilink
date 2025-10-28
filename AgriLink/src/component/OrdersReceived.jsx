@@ -112,7 +112,7 @@ const OrdersReceived = () => {
             {order.status === "Pending" && (
               <div className="flex justify-end pt-4 border-t border-gray-200 mt-2">
                 <button className="px-6 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium transition-colors duration-200">
-                  Mark as Shipped
+                  Ready to Ship
                 </button>
               </div>
             )}

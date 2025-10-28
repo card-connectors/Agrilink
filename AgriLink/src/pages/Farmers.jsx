@@ -92,15 +92,13 @@ const Farmers = () => {
                   <div>
                     <h3 className="text-xl font-bold text-gray-800">{farmer.name}</h3>
                     <div className="flex items-center mt-2">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        {farmer.farmingType}
-                      </span>
+
                     </div>
                   </div>
                   <div className="text-2xl">
-                    {farmer.farmingType === 'Beekeeping' && '🐝'}
-                    {farmer.farmingType === 'Mushroom Farming' && '🍄'}
-                    {farmer.farmingType === 'Mixed Farming' && '🌾'}
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        {farmer.farmingType}
+                      </span>
                   </div>
                 </div>
               </div>

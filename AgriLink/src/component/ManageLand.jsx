@@ -1,8 +1,11 @@
 // pages/ManageLand.jsx
-import { useState } from "react";
+import { useContext, useState } from "react";
 import AddLand from "./AddLand";
+import { AuthContext } from "../ContextFiles/AllContext";
 
 const ManageLand = () => {
+    const { userId } = useContext(AuthContext); // user email
+
   const [lands, setLands] = useState([
     { id: 1, name: "Green Farm", location: "Thanjavur", size: "2 acres", available: true },
   ]);

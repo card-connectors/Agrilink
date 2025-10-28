@@ -25,8 +25,9 @@ import ManageLand from "./component/ManageLand";
 import ManageFarming from "./component/ManageFarming";
 import ManageProducts from "./component/ManageProducts";
 import PlaceOrder from "./component/PlaceOrder";
-import Authcheck from "./component/Authcheck";
-import AuthProvider from "./ContextFiles/AuthProvider";
+import DeliveryPerson from "./component/DeliveryPerson";
+import UserDashboard from "./pages/UserDashboard";
+
 
 
 function App() {
@@ -48,6 +49,8 @@ function App() {
       <Navbar onLoginClick={openLogin} />
       {/* Navbar visible on all pages */}
       {/* Main content area */}
+
+{/* <DeliveryPerson/> */}
 
       <main className="container mx-auto px-4 py-8">
 

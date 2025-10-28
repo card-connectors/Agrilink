@@ -1,23 +1,29 @@
 // components/AddProductsModal.jsx
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { AuthContext } from "../ContextFiles/AllContext";
 
 const AddProducts = ({ onClose, onAdd }) => {
+  const { userId } = useContext(AuthContext); // user email
+
   const [product, setProduct] = useState({
     name: "",
     category: "",
-    minQuantity: "", // minimum bulk purchase in kg
-    price: "",       // price per kg
+    minQuantity: "",
+    price: "",
     otherName: "",
     description: "",
   });
 
+  const [photos, setPhotos] = useState([]);
   const productCategories = ["Vegetables", "Fruits", "Mushroom", "Honey", "Other"];
 
+  // Handle text inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProduct({ ...product, [name]: value });
   };
 
+  // Handle category
   const handleCategoryChange = (e) => {
     const { value, checked } = e.target;
     if (value === "Other") {
@@ -27,31 +33,32 @@ const AddProducts = ({ onClose, onAdd }) => {
     }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  let finalProduct = {...product};
-  if(product.category === "Other") {
-    finalProduct.category = product.otherName || "Other";
-  }
+  // Handle photo uploads (frontend-only)
+  const handleFileChange = (e, idx) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const previewUrl = URL.createObjectURL(file);
+    const newPhotos = [...photos];
+    newPhotos[idx] = previewUrl;
+    setPhotos(newPhotos);
+  };
 
-  const response = await fetch("http://127.0.0.1:8000/api/auth/products/", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify(finalProduct),
-  });
+  const handleRemovePhoto = (e, idx) => {
+    e.stopPropagation();
+    const updated = photos.filter((_, i) => i !== idx);
+    setPhotos(updated);
+  };
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    alert("Failed to add product: " + JSON.stringify(errorData));
-  } else {
-    alert("Product added successfully!");
-    onAdd && onAdd();
+  // Local-only submit
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let finalProduct = { ...product };
+    if (product.category === "Other") {
+      finalProduct.category = product.otherName || "Other";
+    }
+    onAdd && onAdd(finalProduct);
     onClose && onClose();
-  }
-};
-
-
-
+  };
 
   return (
     <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-4">
@@ -115,14 +122,14 @@ const handleSubmit = async (e) => {
           {/* Minimum Bulk Purchase */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Minimum Bulk Purchase (kg)
+              Minimum Bulk Purchase (kg/L)
             </label>
             <input
               type="number"
               name="minQuantity"
               value={product.minQuantity}
               onChange={handleChange}
-              placeholder="Enter minimum bulk purchase in kg"
+              placeholder="Enter minimum bulk purchase in kg/L"
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"
               min={1}
               required
@@ -132,18 +139,67 @@ const handleSubmit = async (e) => {
           {/* Price per kg */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Price per kg (₹)
+              Price per unit (₹)
             </label>
             <input
               type="number"
               name="price"
               value={product.price}
               onChange={handleChange}
-              placeholder="Enter price per kg"
+              placeholder="Enter price per kg/L"
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"
               min={1}
               required
             />
+          </div>
+
+          {/* Upload Photos (Frontend Only) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Upload Photos (Max 4)
+            </label>
+            <div className="grid grid-cols-2 gap-2 border rounded-lg p-4">
+              {[0, 1, 2, 3].map((idx) => (
+                <div
+                  key={idx}
+                  className="w-full h-32 bg-gray-100 flex items-center justify-center cursor-pointer relative rounded"
+                  onClick={() =>
+                    document.getElementById(`photoInput-${idx}`).click()
+                  }
+                >
+                  {photos[idx] ? (
+                    <>
+                      <img
+                        src={photos[idx]}
+                        alt={`uploaded-${idx}`}
+                        className="w-full h-full object-cover rounded"
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => handleRemovePhoto(e, idx)}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                      >
+                        &times;
+                      </button>
+                    </>
+                  ) : (
+                    <p className="text-gray-400 text-sm text-center">
+                      {photos.length < 4
+                        ? "Click to upload"
+                        : "Maximum photos uploaded"}
+                    </p>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    id={`photoInput-${idx}`}
+                    className="hidden"
+                    onChange={(e) => handleFileChange(e, idx)}
+                    disabled={photos.length >= 4 && !photos[idx]}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Description */}
