@@ -1,6 +1,9 @@
 import React from "react";
 
 const YourOrders = () => {
+
+    const { userId } = useContext(AuthContext); // stores the userID
+
   const orders = [
     {
       id: "ORD-001",

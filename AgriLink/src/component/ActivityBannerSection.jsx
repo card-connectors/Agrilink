@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../ContextFiles/AllContext";
 
 const ActivityBannerSection = () => {
   const navigate = useNavigate();
+  const { userId } = useContext(AuthContext); // stores the userID
 
 const actions = [
   {

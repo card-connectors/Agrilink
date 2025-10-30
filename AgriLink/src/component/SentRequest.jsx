@@ -1,6 +1,9 @@
 import React from "react";
 
 const SentRequest = () => {
+
+    const { userId } = useContext(AuthContext); // stores the userID
+
   const requests = [
     {
       to: "Farmer Arjun",

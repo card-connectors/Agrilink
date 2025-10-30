@@ -3,7 +3,7 @@ import React, { useContext, useState } from "react";
 import { AuthContext } from "../ContextFiles/AllContext";
 
 const AddProducts = ({ onClose, onAdd }) => {
-  const { userId } = useContext(AuthContext); // user email
+  const { userId } = useContext(AuthContext); // Storex the userId
 
   const [product, setProduct] = useState({
     name: "",

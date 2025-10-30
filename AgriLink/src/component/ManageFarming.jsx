@@ -4,8 +4,7 @@ import { AuthContext } from "../ContextFiles/AllContext";
 
 const ManageFarming = () => {
 
-  const { userId } = useContext(AuthContext); // user email
-
+  const { userId } = useContext(AuthContext); // has userId
 
   const [farms, setFarms] = useState([
     { id: 1, crop: "Mixed Farming", type: "Mixed", experience: 5, available: true },

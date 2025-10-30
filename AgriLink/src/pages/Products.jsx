@@ -1,12 +1,15 @@
 // pages/Products.jsx
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { EntityContext } from "../ContextFiles/AllContext";
 
 const Products = () => {
   // State for search/filter
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("All");
   const [priceRange, setPriceRange] = useState("All");
+    const { userId } = useContext(AuthContext); // stores the userID
+const {productId, setProductId} = useContext(EntityContext); // for productID
 
   const navigate = useNavigate();
 

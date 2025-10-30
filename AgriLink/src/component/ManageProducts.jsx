@@ -5,7 +5,7 @@ import { AuthContext } from "../ContextFiles/AllContext";
 
 const ManageProducts = () => {
 
-    const { userId } = useContext(AuthContext); // user email
+    const { userId } = useContext(AuthContext); // has UserId
   
   const [products, setProducts] = useState([
     { id: 1, name: "Raw Organic Honey", category: "Honey", minQuantity: 5, price: 200, available: true },

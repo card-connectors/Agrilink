@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { EntityContext } from '../ContextFiles/AllContext';
 
 const ProductDetails = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(5);
   const navigate = useNavigate();
+    const { userId } = useContext(AuthContext); // stores the userID
+const {productId} = useContext(EntityContext); //for productId
 
   // ✅ Product data
   const product = {

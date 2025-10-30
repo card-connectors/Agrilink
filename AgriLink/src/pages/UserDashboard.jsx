@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ActivityBannerSection from "../component/ActivityBannerSection"
 
 const UserDashboard = () => {
+    const { userId } = useContext(AuthContext); // stores the userID
   const navigate = useNavigate();
 
   const icons = {

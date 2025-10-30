@@ -1,6 +1,9 @@
 import React from "react";
 
 const ReceivedRequests = () => {
+
+    const { userId } = useContext(AuthContext); // stores the userID
+
   const requests = [
     {
       from: "Landowner Priya",

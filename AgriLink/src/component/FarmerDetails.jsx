@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import FarmerImage from '../assets/images/Farmer.jpg';
 import ThankYouModal from './ThankYouModal';
+import { EntityContext } from '../ContextFiles/AllContext';
 
 const FarmerDetails = () => {
   const [modalOpen, setModalOpen] = useState(false);
+    const { userId } = useContext(AuthContext); // stores the userID
+  const {farmerId} = useContext(EntityContext); // stores the farmerID
 
   const farmer = {
     name: "Nandha Kumar",

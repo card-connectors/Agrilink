@@ -4,6 +4,8 @@ import ThankYouModal from './ThankYouModal';
 const LandDetails = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
+    const { userId } = useContext(AuthContext); // stores the userID
+const [landId] = useContext(EntityContext); // stores the landId
 
   // Sample land data
   const land = {

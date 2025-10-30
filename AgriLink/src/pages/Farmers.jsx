@@ -1,6 +1,7 @@
 // pages/Landowner.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { EntityContext } from '../ContextFiles/AllContext';
 
 const Farmers = () => {
   // State for search/filter (non-functional for now)
@@ -8,6 +9,7 @@ const Farmers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('All');
   const navigate = useNavigate();
+  const { setFarmerId } = useContext(EntityContext); // sets the farmer id
 
   useEffect(() => {
     fetch('http://127.0.0.1:8000/api/auth/farmers/')
@@ -96,9 +98,9 @@ const Farmers = () => {
                     </div>
                   </div>
                   <div className="text-2xl">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        {farmer.farmingType}
-                      </span>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      {farmer.farmingType}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -133,7 +135,10 @@ const Farmers = () => {
               {/* Card Footer */}
               <div className="p-6 border-t border-gray-100 bg-gray-50">
                 <button
-                  onClick={() =>  navigate("/farmersdetails", { state: farmer })}
+                  onClick={() => {
+                    setFarmerId(farmer.id); // store the farmer’s ID in context
+                    navigate("/farmersdetails"); // navigate to profile
+                  }}
                   className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium"
                 >
                   Farmer Profile

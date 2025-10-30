@@ -4,7 +4,7 @@ import AddLand from "./AddLand";
 import { AuthContext } from "../ContextFiles/AllContext";
 
 const ManageLand = () => {
-    const { userId } = useContext(AuthContext); // user email
+    const { userId } = useContext(AuthContext); // has userid
 
   const [lands, setLands] = useState([
     { id: 1, name: "Green Farm", location: "Thanjavur", size: "2 acres", available: true },

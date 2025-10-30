@@ -7,6 +7,10 @@ const PlaceOrder = () => {
   const [orderConfirmed, setOrderConfirmed] = useState(false);
   const [addressSubmitted, setAddressSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+    const { userId } = useContext(AuthContext); // stores the userID
+
+
+
   const [deliveryAddress, setDeliveryAddress] = useState({
     name: "",
     address: "",

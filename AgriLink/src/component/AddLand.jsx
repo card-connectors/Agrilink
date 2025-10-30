@@ -3,7 +3,7 @@ import React, { useContext, useState } from "react";
 import { AuthContext } from "../ContextFiles/AllContext";
 
 const AddLand = ({ onClose, onAdd }) => {
-  const { userId } = useContext(AuthContext); // user email
+  const { userId } = useContext(AuthContext); // stores the userId
 
 
   const [land, setLand] = useState({

@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { EntityContext } from '../ContextFiles/AllContext';
 
 const LandCard = ({ land }) => {
+
+const [landId, setLandId] = useContext(EntityContext); // stores the landId
+
   const {
     id,
     title,
@@ -43,7 +47,8 @@ const LandCard = ({ land }) => {
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
-    navigate("/landdetails", { state: land });
+    navigate("/landdetails");
+    setLandId(land.id);
   };
 
   return (

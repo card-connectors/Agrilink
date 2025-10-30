@@ -3,7 +3,7 @@ import { AuthContext } from "../ContextFiles/AllContext";
 
 const DeliveryPerson = () => {
 
-    const { userId } = useContext(AuthContext); // user email
+    const { userId } = useContext(AuthContext); // stores userid
 
 
   const [activeTab, setActiveTab] = useState("deliveries"); // Assigned Deliveries as active tab

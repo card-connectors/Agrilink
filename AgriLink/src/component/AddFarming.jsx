@@ -1,9 +1,9 @@
 // components/AddFarmingModal.jsx
 import React, { useContext, useState } from "react";
-import { AuthContext } from "../ContextFiles/AllContext";
+import { AuthContext, EntityContext } from "../ContextFiles/AllContext";
 
 const AddFarming = ({ onClose, onAdd }) => {
-  const { userId } = useContext(AuthContext); // user email
+  const { userId } = useContext(AuthContext); // stores the userID
 
   const [farming, setFarming] = useState({
     experience: "",
