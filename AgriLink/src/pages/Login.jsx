@@ -70,7 +70,6 @@ const Login = ({ onClose }) => {
         }
 
         saveAuth(data.token, data.user);
-        setUserId(form.email); 
         navigate("/");
 
       } else {
@@ -102,7 +101,6 @@ const Login = ({ onClose }) => {
 
         // Signup success
         saveAuth(data.token, data.user);
-        setUserId(form.email); 
         navigate("/profileSetup");
       }
 
