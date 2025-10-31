@@ -25,7 +25,6 @@ import ManageLand from "./component/ManageLand";
 import ManageFarming from "./component/ManageFarming";
 import ManageProducts from "./component/ManageProducts";
 import PlaceOrder from "./component/PlaceOrder";
-import EntityProvider from "./ContextFiles/EntityProvider";
 
 
 function App() {
@@ -48,41 +47,40 @@ function App() {
       {/* Navbar visible on all pages */}
       {/* Main content area */}
 
-      {/* <DeliveryPerson/> */}
 
       <main className="container mx-auto px-4 py-8">
-        <EntityProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/landowners" element={<Landowners />} />
+          <Route path="/farmers" element={<Farmers />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/login" element={<Login />} />
+          <Route path='/dashboard' element={<Dashboard/>} />
+          <Route path='/orders-received' element={<OrdersReceived/>} />
+          <Route path='/sent-requests' element={<SentRequest/>} />
+          <Route path='/received-requests' element={<ReceivedRequests/>} />
+          <Route path='/your-orders' element={<YourOrders/>} />
+          <Route path="/landdetails" element={<LandDetails/>}/>
+          <Route path="/farmersdetails" element={<FarmerDetails/>}/>
+          <Route path="/dashboard" element={<Dashboard/>} />
+          <Route path="/profileSetup" element={<ProfileSetup/>} />
+          <Route path="/product-details" element={<ProductDetails/>} />
+          <Route path="/add-land" element={<AddLand/>} />
+          <Route path="/add-farming" element={<AddFarming/>} />
+          <Route path="/add-product" element={<AddProducts/>} />
+          <Route path="/manage-land" element={<ManageLand/>} />
+          <Route path="/manage-farming" element={<ManageFarming/>} />
+          <Route path="/manage-products" element={<ManageProducts/>} />
+          <Route path="/place-order" element={<PlaceOrder/>} />
 
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/landowners" element={<Landowners />} />
-            <Route path="/farmers" element={<Farmers />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/login" element={<Login />} />
-            <Route path='/dashboard' element={<Dashboard />} />
-            <Route path='/orders-received' element={<OrdersReceived />} />
-            <Route path='/sent-requests' element={<SentRequest />} />
-            <Route path='/received-requests' element={<ReceivedRequests />} />
-            <Route path='/your-orders' element={<YourOrders />} />
-            <Route path="/landdetails" element={<LandDetails />} />
-            <Route path="/farmersdetails" element={<FarmerDetails />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profileSetup" element={<ProfileSetup />} />
-            <Route path="/product-details" element={<ProductDetails />} />
-            <Route path="/add-land" element={<AddLand />} />
-            <Route path="/add-farming" element={<AddFarming />} />
-            <Route path="/add-product" element={<AddProducts />} />
-            <Route path="/manage-land" element={<ManageLand />} />
-            <Route path="/manage-farming" element={<ManageFarming />} />
-            <Route path="/manage-products" element={<ManageProducts />} />
-            <Route path="/place-order" element={<PlaceOrder />} />
-          </Routes>
 
-        </EntityProvider>
+
+        </Routes>
+
       </main>
       {showLogin && <Login onClose={closeLogin} />}
       <Footer />
-    </div >
+    </div>
   );
 }
 

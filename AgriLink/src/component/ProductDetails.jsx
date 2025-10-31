@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { EntityContext } from '../ContextFiles/AllContext';
+import { AuthContext, EntityContext } from '../ContextFiles/AllContext';
 
 const ProductDetails = () => {
   const [selectedImage, setSelectedImage] = useState(0);

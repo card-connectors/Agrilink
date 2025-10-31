@@ -1,7 +1,7 @@
 // pages/Products.jsx
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { EntityContext } from "../ContextFiles/AllContext";
+import { AuthContext, EntityContext } from "../ContextFiles/AllContext";
 
 const Products = () => {
   // State for search/filter

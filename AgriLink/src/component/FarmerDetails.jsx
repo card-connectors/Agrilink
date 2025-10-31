@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import FarmerImage from '../assets/images/Farmer.jpg';
 import ThankYouModal from './ThankYouModal';
-import { EntityContext } from '../ContextFiles/AllContext';
+import { AuthContext, EntityContext } from '../ContextFiles/AllContext';
 
 const FarmerDetails = () => {
   const [modalOpen, setModalOpen] = useState(false);

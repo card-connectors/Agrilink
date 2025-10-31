@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import ThankYouModal from './ThankYouModal';
+import { AuthContext, EntityContext } from '../ContextFiles/AllContext';
 
 const LandDetails = () => {
   const [modalOpen, setModalOpen] = useState(false);
