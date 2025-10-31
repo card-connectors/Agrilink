@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { EntityContext } from './AllContext';
 
-function LandProvider(children) {
+function EntityProvider({children}) {
     const [landId, setLandId] = useState("");
     const [farmerId, setFarmerId] = useState("");
     const [productId, setProductId] = useState("");
@@ -12,4 +12,4 @@ function LandProvider(children) {
   )
 }
 
-export default LandProvider
+export default EntityProvider
