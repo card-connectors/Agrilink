@@ -3,6 +3,7 @@ import LandCard from '../component/LandCard';
 
 const Lands = () => {
   const [lands, setLands] = useState([]);
+  
 
   useEffect(() => {
     fetch('http://127.0.0.1:8000/api/auth/lands/')

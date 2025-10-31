@@ -8,7 +8,7 @@ import Farmers from "./pages/Farmers";
 import Products from "./pages/Products";
 import Login from "./pages/Login";
 import Footer from "./component/Footer";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import YourOrders from "./component/YourOrders";
 import ReceivedRequests from "./component/ReceivedRequests";
 import SentRequest from "./component/SentRequest";
@@ -25,10 +25,12 @@ import ManageLand from "./component/ManageLand";
 import ManageFarming from "./component/ManageFarming";
 import ManageProducts from "./component/ManageProducts";
 import PlaceOrder from "./component/PlaceOrder";
+import { AuthContext } from "./ContextFiles/AllContext";
 
 
 function App() {
   const [showLogin, setShowLogin] = useState(false);
+  const {userId} = useContext(AuthContext);
   // Function to open login modal
   const openLogin = () => {
     console.log("Opening login modal"); // Debug
@@ -41,12 +43,15 @@ function App() {
     setShowLogin(false);
   };
 
+  console.log("userId:",userId);
+  
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar onLoginClick={openLogin} />
       {/* Navbar visible on all pages */}
       {/* Main content area */}
-
+      
 
       <main className="container mx-auto px-4 py-8">
         <Routes>

@@ -4,7 +4,8 @@ import { EntityContext } from '../ContextFiles/AllContext';
 
 const LandCard = ({ land }) => {
 
-const [landId, setLandId] = useContext(EntityContext); // stores the landId
+const {landId} = useContext(EntityContext); // stores the landId
+
 
   const {
     id,

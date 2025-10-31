@@ -61,6 +61,8 @@ const Login = ({ onClose }) => {
           body: JSON.stringify(body),
         });
 
+
+
         const data = await res.json();
         if (!res.ok) {
           // prefer returned message keys
@@ -69,7 +71,10 @@ const Login = ({ onClose }) => {
           return;
         }
 
+        console.log(data.token);
+        
         saveAuth(data.token, data.user);
+        setUserId(data.user.id);
         navigate("/");
 
       } else {
@@ -87,6 +92,7 @@ const Login = ({ onClose }) => {
           body: JSON.stringify(body),
         });
 
+
         const data = await res.json();
         if (!res.ok) {
           // serializer returns dict of errors; show a friendly message
@@ -101,6 +107,8 @@ const Login = ({ onClose }) => {
 
         // Signup success
         saveAuth(data.token, data.user);
+        setUserId(data.user.id);
+        
         navigate("/profileSetup");
       }
 
