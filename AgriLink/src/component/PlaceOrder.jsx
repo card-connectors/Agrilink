@@ -8,7 +8,7 @@ const PlaceOrder = () => {
   const [orderConfirmed, setOrderConfirmed] = useState(false);
   const [addressSubmitted, setAddressSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-    const { userId } = useContext(AuthContext); // stores the userID
+    const { userId, productId, orderQuantity } = useContext(AuthContext); // stores the userID
 
 
 

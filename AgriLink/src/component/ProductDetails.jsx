@@ -7,7 +7,7 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(5);
   const navigate = useNavigate();
     const { userId } = useContext(AuthContext); // stores the userID
-const {productId} = useContext(EntityContext); //for productId
+const {productId,setOrderQuantity} = useContext(EntityContext); //for productId and quantity
 
   // ✅ Product data
   const product = {

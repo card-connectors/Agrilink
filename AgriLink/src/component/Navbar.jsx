@@ -1,4 +1,4 @@
-// components/Navbar.jsx
+import logo from "../assets/images/logo.jpg"
 import { useState, useContext, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../ContextFiles/AllContext";
@@ -44,12 +44,7 @@ const Navbar = ({ onLoginClick }) => {
             className="flex items-center space-x-2 group"
             onClick={closeMobileMenu}
           >
-            <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center shadow-md">
-              <span className="text-white font-bold text-lg">A</span>
-            </div>
-            <span className="text-2xl font-bold text-gray-800 group-hover:text-gray-600 transition-colors duration-300">
-              AgriLink
-            </span>
+         <img src={logo} className="h-15 w-40"/>
           </Link>
 
           {/* Desktop Menu */}
