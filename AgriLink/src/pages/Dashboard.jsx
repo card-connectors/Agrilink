@@ -7,7 +7,7 @@ function Dashboard() {
 
   const {userId} = useContext(AuthContext); // user email
 
-  let userRole = "delivery";
+  let userRole = "Customer";
 
 
 

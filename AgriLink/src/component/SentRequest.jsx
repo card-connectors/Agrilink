@@ -64,9 +64,6 @@ const SentRequest = () => {
             All requests you've sent to farmers or landowners are listed below.
           </p>
         </div>
-        <button className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold">
-          + New Request
-        </button>
       </div>
 
       {/* Enhanced Requests Grid */}

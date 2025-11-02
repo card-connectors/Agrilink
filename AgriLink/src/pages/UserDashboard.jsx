@@ -1,10 +1,37 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ActivityBannerSection from "../component/ActivityBannerSection"
+import ActivityBannerSection from "../component/ActivityBannerSection";
+import { AuthContext } from "../ContextFiles/AllContext";
 
 const UserDashboard = () => {
-    const { userId } = useContext(AuthContext); // stores the userID
+  const { userId } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const [userData, setUserData] = useState({
+    farmerIds: [],
+    landIds: [],
+    productIds: [],
+    sentRequests: 0,
+    receivedRequests: 0,
+    yourOrders: 0,
+    ordersReceived: 0,
+  });
+
+  // 👇 Simulated fetch (replace with your real API call)
+  useEffect(() => {
+    // You can fetch user details from backend based on userId
+    // Example: axios.get(`/api/user/${userId}`).then(res => setUserData(res.data));
+    const dummyData = {
+      farmerIds: ["f1", "f2"], // or []
+      landIds: [], // or []
+      productIds: ["p1"], // or []
+      sentRequests: 2,
+      receivedRequests: 1,
+      yourOrders: 0,
+      ordersReceived: 3,
+    };
+    setUserData(dummyData);
+  }, [userId]);
 
   const icons = {
     sent: (
@@ -73,48 +100,55 @@ const UserDashboard = () => {
           <path strokeLinecap="round" strokeLinejoin="round" d="M7 10V6a1 1 0 011-1h8a1 1 0 011 1v4" />
         </svg>
       </div>
-
-
-
     ),
   };
 
+  // --- Filter logic ---
   const cards = [
     {
+      key: "sentRequests",
       title: "Sent Requests",
       description: "View and track the requests you've sent",
-      count: 12,
+      count: userData.sentRequests || 0,
       icon: icons.sent,
       path: "/sent-requests",
       badgeColor: "bg-green-500",
+      visible: true,
     },
     {
+      key: "receivedRequests",
       title: "Received Requests",
       description: "Check and accept incoming requests",
-      count: 8,
-      pending: 3,
+      count: userData.receivedRequests || 0,
       icon: icons.received,
       path: "/received-requests",
       badgeColor: "bg-blue-500",
+      visible:
+        (userData.farmerIds?.length > 0 || userData.landIds?.length > 0),
     },
     {
+      key: "yourOrders",
       title: "Your Orders",
       description: "Track your purchased products and delivery status",
-      count: 15,
+      count: userData.yourOrders || 0,
       icon: icons.yourOrders,
       path: "/your-orders",
       badgeColor: "bg-orange-500",
+      visible: true,
     },
     {
+      key: "ordersReceived",
       title: "Orders Received",
       description: "View and manage product orders from customers",
-      count: 24,
-      pending: 5,
+      count: userData.ordersReceived || 0,
       icon: icons.ordersReceived,
       path: "/orders-received",
       badgeColor: "bg-purple-500",
+      visible: userData.productIds?.length > 0,
     },
   ];
+
+  const visibleCards = cards.filter((c) => c.visible);
 
   return (
     <div className="min-h-screen p-10">
@@ -126,32 +160,25 @@ const UserDashboard = () => {
       </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-        {cards.map((card, i) => (
+        {visibleCards.map((card, i) => (
           <div
             key={i}
             onClick={() => navigate(card.path)}
             className="relative flex flex-col p-6 rounded-3xl bg-white/70 border border-gray-200 backdrop-blur-md shadow-md hover:shadow-2xl hover:scale-[1.03] transition-all duration-400 cursor-pointer overflow-hidden"
           >
-            <div className="absolute inset-0 bg-linear-to-br from-white/0 via-white/30 to-transparent group-hover:from-green-100/20 opacity-0 hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
-
             <div className="flex justify-between items-center mb-5">
               {card.icon}
-              <div className="flex items-center space-x-2">
-                {card.pending && (
-                  <span className="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full font-medium">
-                    {card.pending} pending
-                  </span>
-                )}
-                <span
-                  className={`px-3 py-1 text-white text-sm font-semibold shadow-sm rounded-full ${card.badgeColor}`}
-                >
-                  {card.count}
-                </span>
-              </div>
+              <span
+                className={`px-3 py-1 text-white text-sm font-semibold shadow-sm rounded-full ${card.badgeColor}`}
+              >
+                {card.count}
+              </span>
             </div>
 
             <h2 className="text-xl font-semibold text-gray-800 mb-2">{card.title}</h2>
-            <p className="text-gray-600 text-sm mb-6 flex-1 leading-relaxed">{card.description}</p>
+            <p className="text-gray-600 text-sm mb-6 flex-1 leading-relaxed">
+              {card.description}
+            </p>
 
             <div className="flex items-center justify-between mt-auto border-t border-gray-100 pt-4">
               <span className="text-green-600 font-medium text-sm">View details</span>
@@ -162,14 +189,19 @@ const UserDashboard = () => {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
               </svg>
             </div>
           </div>
         ))}
       </div>
 
-        <ActivityBannerSection/>
+      <ActivityBannerSection />
     </div>
   );
 };
