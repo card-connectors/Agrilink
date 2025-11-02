@@ -9,7 +9,7 @@ const Navbar = ({ onLoginClick }) => {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  const { userId, logout } = useContext(AuthContext);
+  const { userId, userName, logout } = useContext(AuthContext);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
@@ -88,7 +88,7 @@ const Navbar = ({ onLoginClick }) => {
                     />
                   </svg>
 
-                  <span className="font-medium text-gray-800">{userId}</span>
+                  <span className="font-medium text-gray-800">{userName || userId}</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className={`h-4 w-4 text-gray-600 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""

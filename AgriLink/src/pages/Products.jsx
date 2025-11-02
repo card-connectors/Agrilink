@@ -9,7 +9,7 @@ const Products = () => {
   const [selectedType, setSelectedType] = useState("All");
   const [priceRange, setPriceRange] = useState("All");
     const { userId } = useContext(AuthContext); // stores the userID
-const {productId, setProductId} = useContext(EntityContext); // for productID
+    const {productId, setProductId} = useContext(EntityContext); // for productID
 
   const navigate = useNavigate();
 

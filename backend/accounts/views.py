@@ -9,6 +9,8 @@ from rest_framework.permissions import AllowAny
 from .models import User, UserProfile
 
 
+from rest_framework.permissions import IsAuthenticated
+
 
 from .models import Land
 from .serializers import LandSerializer
@@ -54,8 +56,19 @@ def add_land_view(request):
     serializer = LandSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response({"message": "Land details saved successfully!"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def current_user_info(request):
+    user = request.user
+    data = {
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+    }
+    return Response(data)
 
 @api_view(["POST"])
 @permission_classes([AllowAny])

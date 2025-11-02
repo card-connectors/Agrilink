@@ -8,7 +8,8 @@ const API_BASE = "http://127.0.0.1:8000/api/auth"; // change if your backend run
 const Login = ({ onClose }) => {
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
-   const { setUserId } = useContext(AuthContext);
+const { setUserId, setUserName } = useContext(AuthContext);
+
 
   const [form, setForm] = useState({
     name: "",
@@ -75,6 +76,7 @@ const Login = ({ onClose }) => {
         
         saveAuth(data.token, data.user);
         setUserId(data.user.id);
+        setUserName(data.user.name);
         navigate("/");
 
       } else {
@@ -108,7 +110,7 @@ const Login = ({ onClose }) => {
         // Signup success
         saveAuth(data.token, data.user);
         setUserId(data.user.id);
-        
+        setUserName(data.user.name);
         navigate("/profileSetup");
       }
 
