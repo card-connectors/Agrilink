@@ -1,30 +1,30 @@
-// components/AddLandModal.jsx
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../ContextFiles/AllContext";
 
 const AddLand = ({ onClose, onAdd }) => {
   const { userId } = useContext(AuthContext); // stores the userId
 
+// keep your land text fields as before
+const [land, setLand] = useState({
+  title: "",
+  location: "",
+  area: "",
+  pricePerAcre: "",
+  soilType: "",
+  waterResources: [],
+  suitableFor: [],
+  description: "",
+});
 
-  const [land, setLand] = useState({
-    title: "",
-    location: "",
-    area: "",
-    pricePerAcre: "",
-    soilType: "",
-    waterResources: [],
-    suitableFor: [],
-    description: "",
-    photos: [],
-  });
-
-  // handle input changes
+// NEW: per-slot file storage (4 slots)
+const MAX_PHOTOS = 4;
+const [photoFiles, setPhotoFiles] = useState(Array(MAX_PHOTOS).fill(null));      // Array<File|null>
+const [photoPreviews, setPhotoPreviews] = useState(Array(MAX_PHOTOS).fill(null)); // Array<string|null>
   const handleChange = (e) => {
     const { name, value } = e.target;
     setLand({ ...land, [name]: value });
   };
 
-  // handle checkbox (multi-select) changes
   const handleCheckboxChange = (e, field) => {
     const { value, checked } = e.target;
     setLand((prev) => ({
@@ -35,39 +35,113 @@ const AddLand = ({ onClose, onAdd }) => {
     }));
   };
 
-  // handle image upload
-  const handleFileChange = (e, idx) => {
-    const file = e.target.files[0];
-    if (!file) return;
 
-    const newPhotos = [...land.photos];
-    newPhotos[idx] = URL.createObjectURL(file);
-    setLand({ ...land, photos: newPhotos });
-  };
+  useEffect(() => {
+  // initialize with 4 slots if empty (optional)
+  if (photoFiles.length === 0) {
+    setPhotoFiles([null, null, null, null]);
+    setPhotoPreviews([null, null, null, null]);
+  }
+}, []);
 
-  // handle photo removal
-  const handleRemovePhoto = (e, idx) => {
-    e.stopPropagation();
-    const newPhotos = land.photos.filter((_, i) => i !== idx);
-    setLand({ ...land, photos: newPhotos });
-  };
+// called like onChange={(e) => handleFileChange(e, idx)}
+const handleFileChange = (e, idx) => {
+  const files = e?.target?.files;
+  if (!files || files.length === 0) return; // prevents your TypeError
 
-  // local submit handler (no backend)
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onAdd && onAdd(land);
-    onClose && onClose();
-  };
+  const file = files[0];
+
+  // update file slot
+  setPhotoFiles(prev => {
+    const next = prev ? [...prev] : Array(MAX_PHOTOS).fill(null);
+    next[idx] = file;
+    return next;
+  });
+
+  // update preview slot (revoke old URL to avoid leaks)
+  setPhotoPreviews(prev => {
+    const next = prev ? [...prev] : Array(MAX_PHOTOS).fill(null);
+    if (next[idx]) URL.revokeObjectURL(next[idx]);
+    next[idx] = URL.createObjectURL(file);
+    return next;
+  });
+};
+
+const handleRemovePhoto = (e, idx) => {
+  e.stopPropagation();
+  setPhotoFiles(prev => {
+    const next = prev ? [...prev] : Array(MAX_PHOTOS).fill(null);
+    next[idx] = null;
+    return next;
+  });
+  setPhotoPreviews(prev => {
+    const next = prev ? [...prev] : Array(MAX_PHOTOS).fill(null);
+    if (next[idx]) {
+      URL.revokeObjectURL(next[idx]);
+      next[idx] = null;
+    }
+    return next;
+  });
+};
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  // basic validation
+  const selectedFiles = photoFiles.filter(Boolean);
+  if (selectedFiles.length === 0) {
+    alert("Please upload at least one photo.");
+    return;
+  }
+
+  const formData = new FormData();
+
+  // append land text fields
+  formData.append('title', land.title);
+  formData.append('location', land.location);
+  formData.append('area', land.area);
+  formData.append('pricePerAcre', land.pricePerAcre);
+  formData.append('soilType', land.soilType);
+  formData.append('description', land.description);
+  formData.append('user_id', userId);
+
+  // arrays: append each item (backend can read getlist or JSONField)
+  land.waterResources.forEach(item => formData.append('waterResources[]', item));
+  land.suitableFor.forEach(item => formData.append('suitableFor[]', item));
+
+  // append files (key 'photos' - backend uses getlist('photos'))
+  selectedFiles.forEach(f => formData.append('photos', f));
+
+  const res = await fetch("http://localhost:8000/api/add-land/", {
+    method: "POST",
+    body: formData,
+    // DO NOT set Content-Type header
+  });
+
+  const text = await res.text();
+  let data;
+  try { data = JSON.parse(text); } catch { data = { raw: text }; }
+
+  if (!res.ok) {
+    console.error("Upload failed:", data);
+    alert("Failed to add land: " + (data.error || JSON.stringify(data)));
+    return;
+  }
+
+  // success: handle response
+  onAdd && onAdd(data);
+  onClose && onClose();
+};
+
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black bg-opacity-50"
         onClick={onClose}
       ></div>
 
-      {/* Modal Card */}
       <div className="relative bg-white shadow-xl rounded-xl p-6 w-full max-w-2xl z-10 overflow-y-auto max-h-[90vh]">
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
           Add Land Details
@@ -224,43 +298,41 @@ const AddLand = ({ onClose, onAdd }) => {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Upload Photos (Max 4)
             </label>
-            <div className="grid grid-cols-2 gap-2 border rounded-lg p-4">
-              {[0, 1, 2, 3].map((idx) => (
-                <div
-                  key={idx}
-                  className="w-full h-32 bg-gray-100 flex items-center justify-center cursor-pointer relative rounded"
-                  onClick={() => document.getElementById(`photoInput-${idx}`).click()}
-                >
-                  {land.photos[idx] ? (
-                    <>
-                      <img
-                        src={land.photos[idx]}
-                        alt={`land-${idx}`}
-                        className="w-full h-full object-cover rounded"
-                      />
-                      <button
-                        type="button"
-                        onClick={(e) => handleRemovePhoto(e, idx)}
-                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                      >
-                        &times;
-                      </button>
-                    </>
-                  ) : (
-                    <p className="text-gray-400 text-sm text-center">
-                      Click to upload
-                    </p>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    id={`photoInput-${idx}`}
-                    className="hidden"
-                    onChange={(e) => handleFileChange(e, idx)}
-                  />
-                </div>
-              ))}
-            </div>
+            <div className="grid grid-cols-4 gap-3">
+  {Array.from({ length: MAX_PHOTOS }).map((_, idx) => (
+    <label
+      key={idx}
+      className="w-28 h-28 bg-gray-100 rounded overflow-hidden relative cursor-pointer flex items-center justify-center"
+    >
+      {photoPreviews[idx] ? (
+        <>
+          <img
+            src={photoPreviews[idx]}
+            alt={`land-${idx}`}
+            className="w-full h-full object-cover rounded"
+          />
+          <button
+            type="button"
+            onClick={(e) => handleRemovePhoto(e, idx)}
+            className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+          >
+            &times;
+          </button>
+        </>
+      ) : (
+        <p className="text-gray-400 text-sm text-center">Click to upload</p>
+      )}
+
+      {/* per-slot single file input */}
+      <input
+        type="file"
+        accept="image/*"
+        className="absolute inset-0 opacity-0 cursor-pointer"
+        onChange={(e) => handleFileChange(e, idx)}
+      />
+    </label>
+  ))}
+</div>
           </div>
 
           {/* Buttons */}

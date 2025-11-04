@@ -18,6 +18,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ['id', 'phone', 'address', 'city', 'state', 'pin', 'userType', 'user']
 
 class LandSerializer(serializers.ModelSerializer):
+    user_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='user', write_only=True
+    )
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = Land
         fields = '__all__'
@@ -39,6 +44,14 @@ class FarmerSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class LandSerializer(serializers.ModelSerializer):
+    # show images nested (read-only) if you want to return them
+    images = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Land
         fields = '__all__'
+        read_only_fields = ('created_at', 'status', 'user')
+
+    def get_images(self, obj):
+        # return image URLs
+        return [request.build_absolute_uri(img.image.url) if (request := self.context.get('request')) else img.image.url for img in obj.images.all()]

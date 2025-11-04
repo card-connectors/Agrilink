@@ -15,13 +15,31 @@ class UserProfile(models.Model):
     userType = models.CharField(max_length=20)
 
 class Land(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lands', null=True, blank=True)
     title = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
     area = models.FloatField()
-    soilType = models.CharField(max_length=64)
-    waterResources = models.JSONField(default=list)
-    suitableFor = models.CharField(max_length=64)
+    pricePerAcre = models.DecimalField(max_digits=12, decimal_places=2)
+    soilType = models.CharField(max_length=20)
+    waterResources = models.JSONField(default=list, blank=True)
+    suitableFor = models.JSONField(default=list, blank=True)
     description = models.TextField(blank=True)
+    status = models.CharField(max_length=20, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} - {self.location}"
+
+class LandImage(models.Model):
+    land = models.ForeignKey(Land, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='land_images/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        # return a simple, valid string
+        return f"Image for {self.land.title}"
+    
+    
 
 class Farming(models.Model):
     type = models.CharField(max_length=50)
