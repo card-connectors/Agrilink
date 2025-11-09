@@ -3,12 +3,20 @@ import LandCard from '../component/LandCard';
 
 const Lands = () => {
   const [lands, setLands] = useState([]);
-  
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/auth/lands/')
-      .then(res => res.json())
-      .then(data => setLands(data));
+    fetch('http://127.0.0.1:8000/api/lands/') // Ensure this matches your backend lands endpoint
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch lands');
+        return res.json();
+      })
+      .then(data => {
+        setLands(data);
+      })
+      .catch(error => {
+        console.error('Error fetching lands:', error);
+        setLands([]);
+      });
   }, []);
 
   return (

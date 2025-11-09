@@ -3,7 +3,7 @@ import React, { useContext, useState } from "react";
 import { AuthContext } from "../ContextFiles/AllContext";
 
 const AddProducts = ({ onClose, onAdd }) => {
-  const { userId } = useContext(AuthContext); // Storex the userId
+  const { userId } = useContext(AuthContext); // Store the userId
 
   const [product, setProduct] = useState({
     name: "",
@@ -15,6 +15,9 @@ const AddProducts = ({ onClose, onAdd }) => {
   });
 
   const [photos, setPhotos] = useState([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const productCategories = ["Vegetables", "Fruits", "Mushroom", "Honey", "Other"];
 
   // Handle text inputs
@@ -33,7 +36,7 @@ const AddProducts = ({ onClose, onAdd }) => {
     }
   };
 
-  // Handle photo uploads (frontend-only)
+  // Handle photo previews (frontend only)
   const handleFileChange = (e, idx) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -49,16 +52,59 @@ const AddProducts = ({ onClose, onAdd }) => {
     setPhotos(updated);
   };
 
-  // Local-only submit
-  const handleSubmit = (e) => {
+  // Submit with API POST including user_id
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let finalProduct = { ...product };
-    if (product.category === "Other") {
-      finalProduct.category = product.otherName || "Other";
+    setError("");
+    setLoading(true);
+
+    let finalCategory = product.category === "Other" ? (product.otherName || "Other") : product.category;
+
+    // Basic validation
+    if (
+      !product.name.trim() ||
+      !finalCategory.trim() ||
+      !product.minQuantity ||
+      !product.price
+    ) {
+      setError("Please fill all required fields.");
+      setLoading(false);
+      return;
     }
-    onAdd && onAdd(finalProduct);
-    onClose && onClose();
+
+    try {
+      const formData = new FormData();
+      formData.append("name", product.name);
+      formData.append("category", finalCategory);
+      formData.append("minQuantity", product.minQuantity);
+      formData.append("price", product.price);
+      formData.append("otherName", product.otherName);
+      formData.append("description", product.description);
+      formData.append("user_id", userId);
+
+      // TODO: Append actual photo files if uploading photos to backend
+
+      const response = await fetch("http://127.0.0.1:8000/api/products/", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.error || "Failed to add product.");
+        setLoading(false);
+        return;
+      }
+
+      // Optionally handle response data
+      onAdd && onAdd(product);
+      onClose && onClose();
+    } catch (error) {
+      setError("An error occurred. Please try again.");
+    }
+    setLoading(false);
   };
+
 
   return (
     <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-4">

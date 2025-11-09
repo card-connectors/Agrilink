@@ -4,6 +4,7 @@ import { AuthContext } from "../ContextFiles/AllContext";
 const SentRequest = () => {
 
     const { userId } = useContext(AuthContext); // stores the userID
+console.log("User ID : ",userId);
 
   const requests = [
     {

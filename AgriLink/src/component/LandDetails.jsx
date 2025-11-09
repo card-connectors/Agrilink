@@ -7,6 +7,7 @@ const LandDetails = () => {
   const [selectedImage, setSelectedImage] = useState(0);
     const { userId } = useContext(AuthContext); // stores the userID
 const {landId} = useContext(EntityContext); // stores the landId
+console.log("land ID : ",landId);
 
   // Sample land data
   const land = {

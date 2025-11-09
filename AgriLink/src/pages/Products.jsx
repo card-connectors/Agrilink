@@ -1,188 +1,45 @@
-// pages/Products.jsx
-import { useContext, useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext, EntityContext } from "../ContextFiles/AllContext";
 
 const Products = () => {
-  // State for search/filter
+  const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("All");
   const [priceRange, setPriceRange] = useState("All");
-    const { userId } = useContext(AuthContext); // stores the userID
-    const {productId, setProductId} = useContext(EntityContext); // for productID
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
+  const { userId } = useContext(AuthContext);
+  const { productId, setProductId } = useContext(EntityContext);
   const navigate = useNavigate();
 
-  // Sample product data with real image URLs (can use your own from /public/products/)
-const products = [
-  {
-    id: 1,
-    name: "Raw Organic Honey",
-    type: "Honey",
-    farmer: "Sarah",
-    price: "₹20",
-    description:
-      "Pure, raw honey from local wildflowers. Unprocessed and packed with natural enzymes and antioxidants.",
-    location: "Kanyakumari",
-    inStock: true,
-    image:
-      "https://images.unsplash.com/photo-1626285094816-39f688104ce0?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 2,
-    name: "Shiitake Mushroom Spawn",
-    type: "Mushroom Spawn",
-    farmer: "Manikandan",
-    price: "₹30",
-    description:
-      "High-quality shiitake mushroom spawn for cultivation. Ready for inoculation on hardwood logs.",
-    location: "Erode",
-    inStock: true,
-    image:
-      "https://www.thespruceeats.com/thmb/mX653gWXw44WciX33xypyLq86as=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-186473156-565bc8235f9b5835e470217a.jpg",
-  },
-  {
-    id: 3,
-    name: "Fresh Oyster Mushrooms",
-    type: "Mushrooms",
-    farmer: "Priya",
-    price: "₹30",
-    description:
-      "Freshly harvested oyster mushrooms. Perfect for cooking, with a delicate flavor and texture.",
-    location: "Salem",
-    inStock: true,
-    image:
-      "https://5.imimg.com/data5/SELLER/Default/2025/3/498372849/CO/HK/VD/160794331/fresh-oyster-mushroom.jpg",
-  },
-  {
-    id: 4,
-    name: "Organic Seasonal Vegetables",
-    type: "Vegetables",
-    farmer: "Kanishka",
-    price: "₹15",
-    description:
-      "Mixed seasonal vegetables including tomatoes, peppers, and zucchini. Grown without pesticides.",
-    location: "Thanjavur",
-    inStock: true,
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRP1rAsYxJpBaTJSQf-XvjpGTpCDlbHKUBaKA&s",
-  },
-  {
-    id: 5,
-    name: "Bee Pollen",
-    type: "Honey",
-    farmer: "Gopinathan",
-    price: "₹25",
-    description:
-      "Pure bee pollen collected from diverse floral sources. Rich in proteins, vitamins, and minerals.",
-    location: "Salem",
-    inStock: false,
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpkbL7jUPOVkxIb0t2StM4CDAUBbbfwSH7DA&s",
-  },
-  {
-    id: 6,
-    name: "Lion's Mane Mushroom Kit",
-    type: "Mushroom Spawn",
-    farmer: "Thangavel",
-    price: "₹35",
-    description:
-      "Complete grow-at-home kit for Lion's Mane mushrooms. Includes substrate and detailed instructions.",
-    location: "Pudukkottai",
-    inStock: true,
-    image:
-      "https://dujjhct8zer0r.cloudfront.net/media/prod_image/f4454641e71774971a4801fc91e5ff9d-08-18-25-17-50-48.webp",
-  },
-  {
-    id: 7,
-    name: "Fresh Herbs Bundle",
-    type: "Vegetables",
-    farmer: "Harini",
-    price: "₹10",
-    description:
-      "Assorted fresh herbs including basil, mint, and cilantro. Perfect for cooking and garnishing.",
-    location: "Viluppuram",
-    inStock: true,
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfltOi3f-h4SdOvsuxcpIlS3O71ESp31h1kQ&s",
-  },
-  {
-    id: 8,
-    name: "Propolis Tincture",
-    type: "Honey",
-    farmer: "Sarah",
-    price: "₹30",
-    description:
-      "Natural propolis extract with immune-supporting properties. Alcohol-free and pure.",
-    location: "Salem",
-    inStock: true,
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOMPJNDUSd1p9Zau4eTF-FmDABOAa_W6iYLA&s",
-  },
-  {
-    id: 9,
-    name: "Portobello Mushrooms",
-    type: "Mushrooms",
-    farmer: "Murthy",
-    price: "₹30",
-    description:
-      "Large, meaty portobello mushrooms. Ideal for grilling, stuffing, or as meat substitutes.",
-    location: "Coimbatore",
-    inStock: true,
-    image:
-      "https://assets.woolworths.com.au/images/1005/89466.jpg?impolicy=wowbumxfyzp&w=500&h=500",
-  },
-  {
-    id: 10,
-    name: "Organic Potatoes",
-    type: "Vegetables",
-    farmer: "Jayaraman",
-    price: "₹20",
-    description:
-      "Fresh organic potatoes from our farm. Great for baking, mashing, or roasting.",
-    location: "Namakkal",
-    inStock: true,
-    image:
-      "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 11,
-    name: "Royal Jelly",
-    type: "Honey",
-    farmer: "Kannan",
-    price: "₹45",
-    description:
-      "Pure royal jelly harvested from our beehives. Known for its nutritional and wellness benefits.",
-    location: "Thanjavur",
-    inStock: true,
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoriwiGvZJnN5GLFvBdJshW3cvY2KcGXoQzA&s",
-  },
-  {
-    id: 12,
-    name: "Maitake Mushroom Spawn",
-    type: "Mushroom Spawn",
-    farmer: "Priya",
-    price: "₹30",
-    description:
-      "Maitake mushroom spawn for outdoor cultivation. Also known as Hen of the Woods.",
-    location: "Salem",
-    inStock: false,
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS48zHXsQdOb5d1XBgNj-TQEQvvz8qZCmLtXg&s",
-  },
-];
+  const pageSize = 10; // items per page
 
+  useEffect(() => {
+    // Fetch product data with pagination parameters
+    fetch('http://127.0.0.1:8000/api/products/?page=1')
+      .then((res) => res.json())
+      .then((data) => {
+        // Assuming backend pagination returns { results: [...], count, next, previous }
+        setProducts(data.results || data);
+        // Calculate total pages if count and page_size provided
+        if (data.count) {
+          setTotalPages(Math.ceil(data.count / pageSize));
+        }
+      })
+      .catch((err) => console.error("Failed to fetch products:", err));
+  }, [currentPage]);
 
-  // Filter products
+  // Filter products locally after fetching page data
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.farmer.toLowerCase().includes(searchTerm.toLowerCase());
+      (product.farmer && product.farmer.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesType = selectedType === "All" || product.type === selectedType;
 
     let matchesPrice = true;
-    const priceNum = parseFloat(product.price.replace("₹", ""));
+    const priceNum = parseFloat(product.price?.toString().replace("₹", ""));
     if (priceRange === "Under ₹15") {
       matchesPrice = priceNum < 15;
     } else if (priceRange === "₹15 - ₹30") {
@@ -197,17 +54,20 @@ const products = [
   const productTypes = ["All", ...new Set(products.map((p) => p.type))];
   const priceRanges = ["All", "Under ₹15", "₹15 - ₹30", "Over ₹30"];
 
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
+        {/* Header Section */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">
-            Explore Available Products
-          </h1>
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">Explore Available Products</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Browse and connect with farmers selling their products. Fresh,
-            organic, and locally sourced goods.
+            Browse and connect with farmers selling their products. Fresh, organic, and locally sourced goods.
           </p>
         </div>
 
@@ -216,9 +76,7 @@ const products = [
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Search */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Search Products
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Search Products</label>
               <input
                 type="text"
                 placeholder="Search by product or farmer..."
@@ -230,9 +88,7 @@ const products = [
 
             {/* Type */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Product Type
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Product Type</label>
               <select
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
@@ -248,9 +104,7 @@ const products = [
 
             {/* Price */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Price Range
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
               <select
                 value={priceRange}
                 onChange={(e) => setPriceRange(e.target.value)}
@@ -266,11 +120,11 @@ const products = [
           </div>
 
           <div className="mt-4 text-sm text-gray-600">
-            Showing {filteredProducts.length} of {products.length} products
+            Showing {filteredProducts.length} of {products.length} products on page {currentPage} of {totalPages}
           </div>
         </div>
 
-        {/* Product Grid */}
+        {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
             <div
@@ -280,7 +134,7 @@ const products = [
               {/* Image */}
               <div className="h-40 overflow-hidden bg-gray-100">
                 <img
-                  src={product.image}
+                  src={product.image || '/default-product.jpg'}
                   alt={product.name}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                 />
@@ -290,9 +144,7 @@ const products = [
               <div className="p-4">
                 <div className="flex items-start justify-between mb-2">
                   <div>
-                    <h3 className="text-lg font-bold text-gray-800">
-                      {product.name}
-                    </h3>
+                    <h3 className="text-lg font-bold text-gray-800">{product.name}</h3>
                     <div className="flex items-center mt-1">
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
                         {product.type}
@@ -313,12 +165,7 @@ const products = [
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                   <span>By {product.farmer}</span>
                 </div>
@@ -330,12 +177,7 @@ const products = [
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   </svg>
                   <span>{product.location}</span>
                 </div>
@@ -345,18 +187,15 @@ const products = [
                 </p>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-amber-600">
-                    {product.price}
-                  </span>
+                  <span className="text-2xl font-bold text-amber-600">{product.price}</span>
                   <button
-                    onClick={() =>
-                      navigate('/product-details')
-                    }
+                    onClick={() => {
+                      setProductId(product.id);
+                      navigate('/product-details');
+                    }}
                     disabled={!product.inStock}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
-                      product.inStock
-                        ? "bg-amber-500 text-white hover:bg-amber-600"
-                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      product.inStock ? "bg-amber-500 text-white hover:bg-amber-600" : "bg-gray-300 text-gray-500 cursor-not-allowed"
                     }`}
                   >
                     {product.inStock ? "Buy Now" : "Out of Stock"}
@@ -367,13 +206,40 @@ const products = [
           ))}
         </div>
 
-        {/* Empty State */}
+        {/* Pagination Controls */}
+        <div className="flex justify-center mt-8 space-x-3">
+          <button
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage <= 1}
+            className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          {[...Array(totalPages)].map((_, idx) => (
+            <button
+              key={idx + 1}
+              onClick={() => goToPage(idx + 1)}
+              className={`px-4 py-2 rounded ${
+                currentPage === idx + 1 ? "bg-amber-500 text-white" : "bg-gray-100"
+              }`}
+            >
+              {idx + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage >= totalPages}
+            className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+
+        {/* Empty state */}
         {filteredProducts.length === 0 && (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              No products found
-            </h3>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">No products found</h3>
             <p className="text-gray-600">Try adjusting your search criteria</p>
           </div>
         )}

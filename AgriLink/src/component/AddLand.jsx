@@ -112,12 +112,14 @@ const handleSubmit = async (e) => {
 
   // append files (key 'photos' - backend uses getlist('photos'))
   selectedFiles.forEach(f => formData.append('photos', f));
-
+  const token = '';
   const res = await fetch("http://localhost:8000/api/add-land/", {
-    method: "POST",
-    body: formData,
-    // DO NOT set Content-Type header
-  });
+      method: "POST",
+      headers: {
+        'Authorization': `Token ${token}`
+      },
+      body: formData,
+});
 
   const text = await res.text();
   let data;

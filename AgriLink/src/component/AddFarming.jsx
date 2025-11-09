@@ -1,9 +1,8 @@
-// components/AddFarmingModal.jsx
 import React, { useContext, useState } from "react";
-import { AuthContext, EntityContext } from "../ContextFiles/AllContext";
+import { AuthContext } from "../ContextFiles/AllContext";
 
-const AddFarming = ({ onClose, onAdd }) => {
-  const { userId } = useContext(AuthContext); // stores the userID
+const AddFarming = ({ onClose }) => {
+  const { userId, token } = useContext(AuthContext || {}); // token optional
 
   const [farming, setFarming] = useState({
     experience: "",
@@ -14,58 +13,94 @@ const AddFarming = ({ onClose, onAdd }) => {
 
   const [photoPreview, setPhotoPreview] = useState(null);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFarming({ ...farming, [name]: value });
+    setFarming((prev) => ({ ...prev, [name]: value }));
   };
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFarming({ ...farming, photo: file });
-      setPhotoPreview(URL.createObjectURL(file)); // preview
+      setFarming((prev) => ({ ...prev, photo: file }));
+      setPhotoPreview(URL.createObjectURL(file));
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
     if (!farming.type || !farming.experience || !farming.description) {
       setError("All fields are required.");
       return;
     }
 
+    setLoading(true);
 
-    if (onAdd) onAdd(farming);
-    onClose();
+    try {
+      const formData = new FormData();
+      formData.append("type", farming.type);
+      formData.append("experience", farming.experience);
+      formData.append("description", farming.description);
+      if (farming.photo) formData.append("photo", farming.photo);
+      // include user_id if available (optional)
+      if (userId) formData.append("user_id", userId);
+
+      const headers = {};
+      if (token) headers["Authorization"] = `Bearer ${token}`; // adjust if you use Token auth
+
+      // Use absolute backend URL if your React dev server is separate
+      const res = await fetch("http://127.0.0.1:8000/api/farming/", {
+        method: "POST",
+        body: formData,
+        headers, // DO NOT set Content-Type (browser will set multipart/form-data boundary)
+        credentials: "include", // include cookies for session auth
+      });
+
+      const text = await res.text().catch(() => "");
+      let data;
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch {
+        data = text;
+      }
+
+      if (!res.ok) {
+        // show server errors
+        const serverMsg =
+          (data && (data.error || data.detail || data.message)) ||
+          (data && typeof data === "object" ? JSON.stringify(data) : data) ||
+          `Server returned ${res.status}`;
+        setError(serverMsg);
+        setLoading(false);
+        return;
+      }
+
+      // Success — optionally you can use returned data to update UI
+      onClose();
+    } catch (err) {
+      console.error("Network error:", err);
+      setError("Network error — please try again.");
+      setLoading(false);
+    }
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={onClose}
-      ></div>
+      <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose}></div>
 
       {/* Modal Card */}
       <div className="relative bg-white shadow-xl rounded-xl p-6 w-full max-w-lg z-10">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
-          Add Farming Details
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Add Farming Details</h2>
 
-        {error && (
-          <div className="text-red-600 text-center text-sm mb-3">{error}</div>
-        )}
+        {error && <div className="text-red-600 text-center text-sm mb-3">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type of Farming
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Type of Farming</label>
             <select
               name="type"
               value={farming.type}
@@ -85,9 +120,7 @@ const AddFarming = ({ onClose, onAdd }) => {
 
           {/* Experience */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Experience (years)
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Experience (years)</label>
             <input
               type="number"
               name="experience"
@@ -101,9 +134,7 @@ const AddFarming = ({ onClose, onAdd }) => {
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
             <textarea
               name="description"
               value={farming.description}
@@ -148,9 +179,10 @@ const AddFarming = ({ onClose, onAdd }) => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
+              disabled={loading}
+              className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400"
             >
-              Add
+              {loading ? "Adding..." : "Add"}
             </button>
           </div>
         </form>
